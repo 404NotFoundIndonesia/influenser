@@ -4,8 +4,6 @@ import { ref } from 'vue';
 
 // Components
 import HeadingSmall from '@/components/HeadingSmall.vue';
-import InputError from '@/components/InputError.vue';
-import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogClose,
@@ -16,8 +14,10 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import Button from 'primevue/button';
+import FloatLabel from 'primevue/floatlabel';
+import Password from 'primevue/password';
+import Message from 'primevue/message';
 
 const passwordInput = ref<HTMLInputElement | null>(null);
 
@@ -52,7 +52,7 @@ const closeModal = () => {
             </div>
             <Dialog>
                 <DialogTrigger as-child>
-                    <Button variant="destructive">Delete account</Button>
+                    <Button variant="destructive" severity="danger" size="small">Delete account</Button>
                 </DialogTrigger>
                 <DialogContent>
                     <form class="space-y-6" @submit="deleteUser">
@@ -65,19 +65,19 @@ const closeModal = () => {
                         </DialogHeader>
 
                         <div class="grid gap-2">
-                            <Label for="password" class="sr-only">Password</Label>
-                            <Input id="password" type="password" name="password" ref="passwordInput" v-model="form.password" placeholder="Password" />
-                            <InputError :message="form.errors.password" />
+                            <FloatLabel variant="in">
+                                <Password v-model="form.password" inputId="password" :fluid="true" :feedback="false" toggleMask />
+                                <label for="password" class="sr-only">Password</label>
+                            </FloatLabel>
+                            <Message v-if="form.errors.password" severity="error" size="small" variant="simple">{{ form.errors.password }}</Message>
                         </div>
 
                         <DialogFooter class="gap-2">
                             <DialogClose as-child>
-                                <Button variant="secondary" @click="closeModal"> Cancel </Button>
+                                <Button size="small" type="button" severity="secondary" label="Cancel" @click="closeModal" />
                             </DialogClose>
 
-                            <Button variant="destructive" :disabled="form.processing">
-                                <button type="submit">Delete account</button>
-                            </Button>
+                            <Button size="small" type="submit" severity="danger" label="Delete account" :loading="form.processing" />
                         </DialogFooter>
                     </form>
                 </DialogContent>

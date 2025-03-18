@@ -3,13 +3,13 @@ import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 
 import DeleteUser from '@/components/DeleteUser.vue';
 import HeadingSmall from '@/components/HeadingSmall.vue';
-import InputError from '@/components/InputError.vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { type BreadcrumbItem, type SharedData, type User } from '@/types';
+import InputText from 'primevue/inputtext';
+import FloatLabel from 'primevue/floatlabel';
+import Message from 'primevue/message';
+import Button from 'primevue/button';
 
 interface Props {
     mustVerifyEmail: boolean;
@@ -50,23 +50,19 @@ const submit = () => {
 
                 <form @submit.prevent="submit" class="space-y-6">
                     <div class="grid gap-2">
-                        <Label for="name">Name</Label>
-                        <Input id="name" class="mt-1 block w-full" v-model="form.name" required autocomplete="name" placeholder="Full name" />
-                        <InputError class="mt-2" :message="form.errors.name" />
+                        <FloatLabel variant="in">
+                            <InputText :fluid="true" :autofocus="true" id="name" v-model="form.name" autocomplete="name" />
+                            <label for="name">Name</label>
+                        </FloatLabel>
+                        <Message v-if="form.errors.name" severity="error" size="small" variant="simple">{{ form.errors.name }}</Message>
                     </div>
 
                     <div class="grid gap-2">
-                        <Label for="email">Email address</Label>
-                        <Input
-                            id="email"
-                            type="email"
-                            class="mt-1 block w-full"
-                            v-model="form.email"
-                            required
-                            autocomplete="username"
-                            placeholder="Email address"
-                        />
-                        <InputError class="mt-2" :message="form.errors.email" />
+                        <FloatLabel variant="in">
+                            <InputText :fluid="true" id="email" v-model="form.email" type="email" />
+                            <label for="email">Email address</label>
+                        </FloatLabel>
+                        <Message v-if="form.errors.email" severity="error" size="small" variant="simple">{{ form.errors.email }}</Message>
                     </div>
 
                     <div v-if="mustVerifyEmail && !user.email_verified_at">
@@ -88,7 +84,11 @@ const submit = () => {
                     </div>
 
                     <div class="flex items-center gap-4">
-                        <Button :disabled="form.processing">Save</Button>
+                        <Button
+                            size="small"
+                            type="submit"
+                            label="Save"
+                            :loading="form.processing" />
 
                         <Transition
                             enter-active-class="transition ease-in-out"

@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import InputError from '@/components/InputError.vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
-import { LoaderCircle } from 'lucide-vue-next';
+import FloatLabel from 'primevue/floatlabel';
+import Password from 'primevue/password';
+import Message from 'primevue/message';
+import Button from 'primevue/button';
 
 const form = useForm({
     password: '',
@@ -26,26 +25,17 @@ const submit = () => {
 
         <form @submit.prevent="submit">
             <div class="space-y-6">
-                <div class="grid gap-2">
-                    <Label htmlFor="password">Password</Label>
-                    <Input
-                        id="password"
-                        type="password"
-                        class="mt-1 block w-full"
-                        v-model="form.password"
-                        required
-                        autocomplete="current-password"
-                        autofocus
-                    />
 
-                    <InputError :message="form.errors.password" />
+                <div class="grid gap-2">
+                    <FloatLabel variant="in">
+                        <Password v-model="form.password" inputId="password" :autofocus="true" :fluid="true" :feedback="false" toggleMask />
+                        <label for="password">Password</label>
+                    </FloatLabel>
+                    <Message v-if="form.errors.password" severity="error" size="small" variant="simple">{{ form.errors.password }}</Message>
                 </div>
 
                 <div class="flex items-center">
-                    <Button class="w-full" :disabled="form.processing">
-                        <LoaderCircle v-if="form.processing" class="h-4 w-4 animate-spin" />
-                        Confirm Password
-                    </Button>
+                    <Button type="submit" label="Confirm Password" :loading="form.processing" />
                 </div>
             </div>
         </form>
