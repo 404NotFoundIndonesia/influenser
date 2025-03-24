@@ -60,29 +60,29 @@ const updatePassword = () => {
 
                 <form @submit.prevent="updatePassword" class="space-y-6">
                     <div class="grid gap-2">
-                        <FloatLabel variant="in">
+                        <FloatLabel variant="on">
                             <Password v-model="form.current_password" :autofocus="true" inputId="current_password" :fluid="true" :feedback="false" toggleMask />
-                            <label for="current_password">Current Password</label>
+                            <label class="text-sm" for="current_password">Current Password</label>
                         </FloatLabel>
                         <Message v-if="form.errors.current_password" severity="error" size="small" variant="simple">{{ form.errors.current_password }}</Message>
                     </div>
 
                     <div class="grid gap-2">
-                        <FloatLabel variant="in">
+                        <FloatLabel variant="on">
                             <Password v-model="form.password" inputId="password" :fluid="true" toggleMask />
-                            <label for="password">New password</label>
+                            <label class="text-sm" for="password">New password</label>
                         </FloatLabel>
                         <Message v-if="form.errors.password" severity="error" size="small" variant="simple">{{ form.errors.password }}</Message>
                     </div>
 
                     <div class="grid gap-2">
-                        <FloatLabel variant="in">
+                        <FloatLabel variant="on">
                             <Password
                                 :invalid="form.password !== form.password_confirmation"
                                 v-model="form.password_confirmation"
                                 inputId="password_confirmation" :fluid="true"
                                 :feedback="false" toggleMask />
-                            <label for="password_confirmation">Confirm password</label>
+                            <label class="text-sm" for="password_confirmation">Confirm password</label>
                         </FloatLabel>
                         <Message v-if="form.errors.password_confirmation" severity="error" size="small" variant="simple">{{ form.errors.password_confirmation }}</Message>
                     </div>

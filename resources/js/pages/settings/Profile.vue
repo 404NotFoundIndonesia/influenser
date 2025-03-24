@@ -50,17 +50,17 @@ const submit = () => {
 
                 <form @submit.prevent="submit" class="space-y-6">
                     <div class="grid gap-2">
-                        <FloatLabel variant="in">
+                        <FloatLabel variant="on">
                             <InputText :fluid="true" :autofocus="true" id="name" v-model="form.name" autocomplete="name" />
-                            <label for="name">Name</label>
+                            <label class="text-sm" for="name">Name</label>
                         </FloatLabel>
                         <Message v-if="form.errors.name" severity="error" size="small" variant="simple">{{ form.errors.name }}</Message>
                     </div>
 
                     <div class="grid gap-2">
-                        <FloatLabel variant="in">
+                        <FloatLabel variant="on">
                             <InputText :fluid="true" id="email" v-model="form.email" type="email" />
-                            <label for="email">Email address</label>
+                            <label class="text-sm" for="email">Email address</label>
                         </FloatLabel>
                         <Message v-if="form.errors.email" severity="error" size="small" variant="simple">{{ form.errors.email }}</Message>
                     </div>

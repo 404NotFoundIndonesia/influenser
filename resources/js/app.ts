@@ -7,6 +7,8 @@ import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from 'ziggy-js';
 import { initializeTheme } from './composables/useAppearance';
+import ConfirmationService from 'primevue/confirmationservice';
+import ToastService from 'primevue/toastservice';
 import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
 
@@ -42,6 +44,8 @@ createInertiaApp({
                     }
                 }
             })
+            .use(ConfirmationService)
+            .use(ToastService)
             .mount(el);
     },
     progress: {
