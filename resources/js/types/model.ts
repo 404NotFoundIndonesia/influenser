@@ -28,6 +28,39 @@ export enum InfluencerStatus {
     Banned = "banned",
 }
 
+export enum Platform {
+    TikTok = 'tiktok',
+    Instagram = 'instagram',
+    Facebook = 'facebook',
+    Twitter = 'twitter',
+    Pinterest = 'pinterest',
+    Youtube = 'youtube',
+    LinkedIn = 'linkedin',
+    Twitch = 'twitch',
+    Discord = 'discord',
+    Reddit = 'reddit',
+    Threads = 'threads',
+    Telegram = 'telegram',
+}
+
+export interface KeyOpinionLeader {
+    id: string;
+    platform: Platform;
+    link: string;
+    engagement_rate: number;
+    followers: number;
+    following: number;
+    views: number;
+    likes: number;
+    shares: number;
+    comments: number;
+    avg_views: number;
+    avg_likes: number;
+    avg_shares: number;
+    avg_comments: number;
+    endorsement_rate: number;
+}
+
 export interface Influencer {
     id: string;
     name: string;
@@ -41,4 +74,5 @@ export interface Influencer {
     created_at: string|null;
     updated_at: string|null;
     picture_url: string|null;
+    key_opinion_leaders?: KeyOpinionLeader[];
 }

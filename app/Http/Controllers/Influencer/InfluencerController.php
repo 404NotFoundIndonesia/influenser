@@ -21,7 +21,7 @@ class InfluencerController extends Controller
     public function index(Request $request): Response
     {
         return Inertia::render('influencer/Index', [
-            'items' => Influencer::query()
+            'items' => Influencer::with(['key_opinion_leaders'])
                 ->filter($request->query('filter'))
                 ->render($request->query('size'))
         ]);
@@ -32,9 +32,7 @@ class InfluencerController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('influencer/Create', [
-
-        ]);
+        return Inertia::render('influencer/Create');
     }
 
     /**
@@ -44,11 +42,16 @@ class InfluencerController extends Controller
     {
         try {
             $input = $request->validated();
+            unset($input['keyOpinionLeaders']);
+
             if ($request->hasFile('photo')) {
                 $input['profile_picture_path'] = $request->file('photo')->storePublicly('influencers');
             }
 
             $influencer = Influencer::query()->create($input);
+            foreach ($request->input('keyOpinionLeaders') as $key) {
+                $influencer->key_opinion_leaders()->create($key);
+            }
 
             return redirect()->route('influencer.show', ['influencer' => $influencer])->with('success', 'Influencer created successfully.');
         } catch (\Throwable $exception) {
@@ -63,6 +66,7 @@ class InfluencerController extends Controller
      */
     public function show(Influencer $influencer): Response
     {
+        $influencer->load(['key_opinion_leaders']);
         return Inertia::render('influencer/Show', [
             'item' => $influencer,
         ]);
@@ -73,6 +77,7 @@ class InfluencerController extends Controller
      */
     public function edit(Influencer $influencer): Response
     {
+        $influencer->load(['key_opinion_leaders']);
         return Inertia::render('influencer/Edit', [
             'item' => $influencer
         ]);
@@ -85,12 +90,25 @@ class InfluencerController extends Controller
     {
         try {
             $input = $request->validated();
+            unset($input['keyOpinionLeaders']);
+
             if ($request->hasFile('photo')) {
                 $influencer->deletePicture();
                 $input['profile_picture_path'] = $request->file('photo')->storePublicly('influencers');
             }
 
             $influencer->update($input);
+            foreach ($request->input('keyOpinionLeaders') as $key) {
+                $id = $key['id'];
+                unset($key['id']);
+                if ($id) {
+                    $influencer->key_opinion_leaders()
+                        ->firstWhere('id', '=', $id)
+                        ->update($key);
+                } else {
+                    $influencer->key_opinion_leaders()->create($key);
+                }
+            }
 
             return back()->with('success', 'Influencer updated successfully.');
         } catch (\Throwable $exception) {

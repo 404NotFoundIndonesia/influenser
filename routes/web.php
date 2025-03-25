@@ -18,6 +18,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/influencer/{influencer}', [\App\Http\Controllers\Influencer\InfluencerController::class, 'update'])->name('influencer.update');
     Route::delete('/influencer', [\App\Http\Controllers\Influencer\InfluencerController::class, 'massDestroy'])->name('influencer.mass-destroy');
     Route::delete('/influencer/{influencer}', [\App\Http\Controllers\Influencer\InfluencerController::class, 'destroy'])->name('influencer.destroy');
+
+    Route::delete('/influencer/{influencer}/kol/{keyOpinionLeader}', [\App\Http\Controllers\KeyOpinionLeaderController::class, 'destroy'])->name('influencer.key-opinion-leader.destroy');
 });
 
 

@@ -6,46 +6,40 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait Filterable
 {
-    public function scopeFilter(Builder $query, ?string $filters): void
+    public function scopeFilter(Builder $query, ?array $filters): void
     {
         $query->when($filters, function (Builder $query) use ($filters) {
-            $filters = json_decode($filters, true);
             foreach ($filters as $column => $filter) {
-                $query->when(!isset($filter['operator']) || !isset($filter['constraints']), function (Builder $query) use ($filter, $column) {
-                    $value = $filter['value'];
-                    $matchMode = $filter['matchMode'];
-                    $this->applyFilter($query, $column, $matchMode, $value);
-                }, function (Builder $query) use ($filter, $column) {
-                    $operator = strtolower($filter['operator']);
-                    $constraints = $filter['constraints'];
-                    $query->where(function (Builder $q) use ($column, $constraints, $operator) {
-                        foreach ($constraints as $index => $constraint) {
-                            $value = $constraint['value'];
-                            $matchMode = $constraint['matchMode'];
+                $value = $filter['value'];
+                if (empty($value)) {
+                    continue;
+                }
 
-                            if ($index === 0) {
-                                $this->applyFilter($q, $column, $matchMode, $value);
-                            } else {
-                                if ($operator === 'or') {
-                                    $q->orWhere(fn($subQuery) => $this->applyFilter($subQuery, $column, $matchMode, $value));
-                                } else {
-                                    $q->where(fn($subQuery) => $this->applyFilter($subQuery, $column, $matchMode, $value));
-                                }
-                            }
-                        }
+                $matchMode = $filter['matchMode'];
+                if (str_contains($column, ".")) {
+                    [$relation, $column] = explode('.', $column);
+                    $query->whereHas($relation, function (Builder $query) use ($column, $matchMode, $value) {
+                        $this->applyFilter($matchMode, $query, $column, $value);
                     });
-                });
+                } else {
+                    $this->applyFilter($matchMode, $query, $column, $value);
+                }
             }
         });
     }
 
-    private function applyFilter($query, $column, $matchMode, $value): void
+    /**
+     * @param mixed $matchMode
+     * @param Builder $query
+     * @param int|string $column
+     * @param mixed $value
+     * @return void
+     */
+    private function applyFilter(mixed $matchMode, Builder $query, int|string $column, mixed $value): void
     {
         switch ($matchMode) {
             case 'equals':
-                if ($value === null) return;
-                $query->where($column, $value);
-                break;
+                is_array($value) ? $query->whereIn($column, array_values(array_unique($value))) : $query->where($column, $value); break;
             case 'startsWith': $query->where($column, 'like', $value . '%'); break;
             case 'contains': $query->where($column, 'like', '%' . $value . '%'); break;
             case 'endsWith': $query->where($column, 'like', '%' . $value); break;

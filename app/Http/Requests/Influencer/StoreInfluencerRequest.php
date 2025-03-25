@@ -30,6 +30,18 @@ class StoreInfluencerRequest extends FormRequest
             'whatsapp' => 'nullable|string',
             'email' => 'nullable|string|email',
             'status' => 'required|string|in:active,inactive,banned',
+            'keyOpinionLeaders.*.username' => 'required|string',
+            'keyOpinionLeaders.*.platform' => 'required|string',
+            'keyOpinionLeaders.*.link' => 'required|string',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'keyOpinionLeaders.*.username' => 'username',
+            'keyOpinionLeaders.*.platform' => 'platform',
+            'keyOpinionLeaders.*.link' => 'link',
         ];
     }
 }

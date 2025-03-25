@@ -8,6 +8,7 @@ use App\Traits\Models\Filterable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Influencer extends Model
 {
@@ -39,4 +40,9 @@ class Influencer extends Model
     protected $appends = [
         'picture_url',
     ];
+
+    public function key_opinion_leaders(): HasMany
+    {
+        return $this->hasMany(KeyOpinionLeader::class);
+    }
 }

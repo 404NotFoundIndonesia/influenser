@@ -2,12 +2,12 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Paginate, Influencer, type InfluencerStatus } from '@/types/model';
-import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
+import { Paginate, Influencer, type InfluencerStatus, Platform } from '@/types/model';
+import { FilterMatchMode } from '@primevue/core/api';
 import Pagination from '@/components/Pagination.vue';
 import {
     Avatar, Column, ConfirmPopup, DataTable,
-    Tag, useConfirm, Select, Toolbar
+    Tag, useConfirm, Select, MultiSelect, Toolbar
 } from 'primevue';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
@@ -31,19 +31,10 @@ const filters = ref({});
 const confirm = useConfirm();
 const initFilter = () => {
     filters.value = {
-        name: {
-            operator: FilterOperator.AND,
-            constraints: [
-                { value: null, matchMode: FilterMatchMode.CONTAINS },
-            ]
-        },
+        name: { value: null, matchMode: FilterMatchMode.CONTAINS },
         phone: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        status: {
-            operator: FilterOperator.OR,
-            constraints: [
-                { value: null, matchMode: FilterMatchMode.EQUALS },
-            ]
-        },
+        status: { value: null, matchMode: FilterMatchMode.EQUALS },
+        'key_opinion_leaders.platform': { value: null, matchMode: FilterMatchMode.EQUALS }
     };
 };
 
@@ -104,7 +95,7 @@ const destroy = (event: MouseEvent, item: Influencer|null) => {
 watch(filters, (newFilters) => {
     router.reload({
         only: ['items'],
-        data: { filter: JSON.stringify(newFilters) },
+        data: { filter: newFilters },
         replace: true,
     });
 }, { deep: true });
@@ -129,13 +120,15 @@ watch(filters, (newFilters) => {
                 </template>
 
                 <template #end>
-                    <Button size="small" label="Export" icon="pi pi-upload" severity="secondary" @click="null" class="mr-2" />
-                    <Button size="small" label="Clear" icon="pi pi-filter-slash" severity="secondary" @click="clearFilter" />
+                    <Button size="small" label="Export" icon="pi pi-upload" severity="secondary" @click="null"
+                            class="mr-2" />
+                    <Button size="small" label="Clear" icon="pi pi-filter-slash" severity="secondary"
+                            @click="clearFilter" />
                 </template>
             </Toolbar>
 
             <DataTable
-                size="small"
+                :lazy="true"
                 filterDisplay="menu"
                 :globalFilterFields="['name', 'location']"
                 v-model:selection="selected" v-model:filters="filters"
@@ -163,8 +156,27 @@ watch(filters, (newFilters) => {
                         <InputText v-model="filterModel.value" type="text" placeholder="Search by phone number" />
                     </template>
                 </Column>
-                <Column field="email" :sortable="true" header="Email" ></Column>
-                <Column field="status" :sortable="true" header="Status" >
+                <Column field="key_opinion_leaders.platform" header="Platform">
+                    <template #body="{ data }">
+                        <div class="flex gap-2">
+                            <template v-for="keyOpinionLeader in data.key_opinion_leaders" :key="keyOpinionLeader.id">
+                                <i :class="`pi pi-${keyOpinionLeader.platform.toLowerCase()}`"
+                                   v-tooltip="keyOpinionLeader.platform" style="font-size: 1rem"></i>
+                            </template>
+                        </div>
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <MultiSelect v-model="filterModel.value" :options="Object.values(Platform)" placeholder="Any" style="min-width: 14rem" :maxSelectedLabels="1">
+                            <template #option="slotProps">
+                                <div class="flex items-center gap-2">
+                                    <i :class="`pi pi-${slotProps.option.toLowerCase()}`" style="font-size: 1.5rem"></i>
+                                    <span>{{ slotProps.option }}</span>
+                                </div>
+                            </template>
+                        </MultiSelect>
+                    </template>
+                </Column>
+                <Column field="status" :sortable="true" header="Status">
                     <template #body="{ data }">
                         <Tag :value="data.status" class="capitalize" :severity="getSeverity(data.status)" />
                     </template>
