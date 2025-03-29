@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Web\Influencer;
 
+use App\Http\Controllers\Controller;
 use App\Models\Influencer;
 use App\Models\KeyOpinionLeader;
 use Illuminate\Http\RedirectResponse;

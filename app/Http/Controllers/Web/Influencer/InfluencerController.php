@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Influencer;
+namespace App\Http\Controllers\Web\Influencer;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Influencer\StoreInfluencerRequest;
@@ -9,7 +9,6 @@ use App\Models\Influencer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 

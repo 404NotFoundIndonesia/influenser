@@ -12,9 +12,6 @@ trait Paginate
     public function scopeRender(Builder $query, ?int $page = null): LengthAwarePaginator
     {
         return $query
-//            ->whereHas('key_opinion_leaders', function (Builder $query) {
-//                $query->whereIn('platform', ['Telegram',]);
-//            })
             ->paginate($page ?? $this->sizePerPage)
             ->withQueryString();
     }
