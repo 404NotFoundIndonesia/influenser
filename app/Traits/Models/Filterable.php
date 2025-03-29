@@ -42,12 +42,23 @@ trait Filterable
                 is_array($value) ? $query->whereIn($column, array_values(array_unique($value))) : $query->where($column, $value); break;
             case 'startsWith': $query->where($column, 'like', $value . '%'); break;
             case 'contains': $query->where($column, 'like', '%' . $value . '%'); break;
+            case 'notContains': $query->where($column, 'not like', '%' . $value . '%'); break;
             case 'endsWith': $query->where($column, 'like', '%' . $value); break;
             case 'notEquals': $query->where($column, '!=', $value); break;
             case 'greaterThan': $query->where($column, '>', $value); break;
-            case 'greaterThanOrEqual': $query->where($column, '>=', $value); break;
+            case 'greaterThanOrEqualTo': $query->where($column, '>=', $value); break;
             case 'lessThan': $query->where($column, '<', $value); break;
-            case 'lessThanOrEqual': $query->where($column, '<=', $value); break;
+            case 'lessThanOrEqualTo': $query->where($column, '<=', $value); break;
+            case 'in': $query->whereIn($column, is_array($value) ? array_values(array_unique($value)) : [$value]); break;
+            case 'between':
+                if (is_array($value) && count($value) === 2) {
+                    $query->whereBetween($column, [$value[0], $value[1]]);
+                }
+                break;
+            case 'dateIs': $query->whereDate($column, '=', $value); break;
+            case 'dateIsNot': $query->whereDate($column, '!=', $value); break;
+            case 'dateBefore': $query->whereDate($column, '<', $value); break;
+            case 'dateAfter': $query->whereDate($column, '>', $value); break;
         }
     }
 }

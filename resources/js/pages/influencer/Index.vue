@@ -7,7 +7,7 @@ import { FilterMatchMode } from '@primevue/core/api';
 import Pagination from '@/components/Pagination.vue';
 import {
     Avatar, Column, ConfirmPopup, DataTable,
-    Tag, useConfirm, Select, MultiSelect, Toolbar
+    Tag, useConfirm, Select, Toolbar
 } from 'primevue';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
@@ -120,22 +120,23 @@ watch(filters, (newFilters) => {
                 </template>
 
                 <template #end>
-                    <Button size="small" label="Export" icon="pi pi-upload" severity="secondary" @click="null"
-                            class="mr-2" />
-                    <Button size="small" label="Clear" icon="pi pi-filter-slash" severity="secondary"
-                            @click="clearFilter" />
+                    <div class="flex gap-x-2">
+                        <Button size="small" label="Clear" icon="pi pi-filter-slash"
+                                severity="secondary" variant="outlined" @click="clearFilter" />
+                    </div>
                 </template>
             </Toolbar>
 
             <DataTable
                 :lazy="true"
-                filterDisplay="menu"
-                :globalFilterFields="['name', 'location']"
-                v-model:selection="selected" v-model:filters="filters"
+                show-gridlines
+                filter-display="menu"
+                v-model:selection="selected"
+                v-model:filters="filters"
                 :value="items.data"
-                tableStyle="min-width: 50rem">
+                table-style="min-width: 50rem">
                 <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-                <Column field="name" :sortable="true" header="Name">
+                <Column field="name" header="Name">
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" placeholder="Search by name" />
                     </template>
@@ -151,7 +152,7 @@ watch(filters, (newFilters) => {
                         </div>
                     </template>
                 </Column>
-                <Column field="phone" :sortable="true" header="Phone Number">
+                <Column field="phone" header="Phone Number">
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" placeholder="Search by phone number" />
                     </template>
@@ -160,23 +161,22 @@ watch(filters, (newFilters) => {
                     <template #body="{ data }">
                         <div class="flex gap-2">
                             <template v-for="keyOpinionLeader in data.key_opinion_leaders" :key="keyOpinionLeader.id">
-                                <i :class="`pi pi-${keyOpinionLeader.platform.toLowerCase()}`"
-                                   v-tooltip="keyOpinionLeader.platform" style="font-size: 1rem"></i>
+                                <i
+                                    :class="`pi pi-${keyOpinionLeader.platform.toLowerCase()}`"
+                                    v-tooltip="keyOpinionLeader.platform"
+                                    style="font-size: 1rem"></i>
                             </template>
                         </div>
                     </template>
                     <template #filter="{ filterModel }">
-                        <MultiSelect v-model="filterModel.value" :options="Object.values(Platform)" placeholder="Any" style="min-width: 14rem" :maxSelectedLabels="1">
-                            <template #option="slotProps">
-                                <div class="flex items-center gap-2">
-                                    <i :class="`pi pi-${slotProps.option.toLowerCase()}`" style="font-size: 1.5rem"></i>
-                                    <span>{{ slotProps.option }}</span>
-                                </div>
-                            </template>
-                        </MultiSelect>
+                        <Select
+                            v-model="filterModel.value" option-value="name" option-label="code"
+                            :options="Object.entries(Platform).map(([key, value]) => ({ code: key, name: value }))"
+                            placeholder="Select One" show-clear>
+                        </Select>
                     </template>
                 </Column>
-                <Column field="status" :sortable="true" header="Status">
+                <Column field="status" header="Status">
                     <template #body="{ data }">
                         <Tag :value="data.status" class="capitalize" :severity="getSeverity(data.status)" />
                     </template>
