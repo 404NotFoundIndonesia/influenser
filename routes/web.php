@@ -10,6 +10,12 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', fn () => Inertia::render('Dashboard'))->name('dashboard');
 
+    Route::get('/niche', [\App\Http\Controllers\Web\Essential\NicheController::class, 'index'])->name('niche.index');
+    Route::post('/niche', [\App\Http\Controllers\Web\Essential\NicheController::class, 'store'])->name('niche.store');
+    Route::put('/niche/{niche}', [\App\Http\Controllers\Web\Essential\NicheController::class, 'update'])->name('niche.update');
+    Route::delete('/niche', [\App\Http\Controllers\Web\Essential\NicheController::class, 'massDestroy'])->name('niche.mass-destroy');
+    Route::delete('/niche/{niche}', [\App\Http\Controllers\Web\Essential\NicheController::class, 'destroy'])->name('niche.destroy');
+
     Route::get('/influencer', [\App\Http\Controllers\Web\Influencer\InfluencerController::class, 'index'])->name('influencer.index');
     Route::get('/influencer/new', [\App\Http\Controllers\Web\Influencer\InfluencerController::class, 'create'])->name('influencer.create');
     Route::post('/influencer', [\App\Http\Controllers\Web\Influencer\InfluencerController::class, 'store'])->name('influencer.store');

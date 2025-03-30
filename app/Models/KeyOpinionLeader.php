@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enum\Platform;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -25,7 +26,7 @@ class KeyOpinionLeader extends Model
     ];
 
     protected $appends = [
-        'is_syncing',
+        'is_syncing', 'platform_name',
     ];
 
     public function isSyncing(): Attribute
@@ -36,6 +37,11 @@ class KeyOpinionLeader extends Model
 
             return now() < Carbon::parse($this->syncing_at)->addDay();
         });
+    }
+
+    public function platformName(): Attribute
+    {
+        return Attribute::get(fn () => Platform::tryFrom($this->platform)?->name);
     }
 
     public function influencer(): BelongsTo

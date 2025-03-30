@@ -5,14 +5,20 @@ import { type BreadcrumbItem } from '@/types';
 import {
     Toolbar, Image, Textarea, Dialog, Button, Fieldset,
     useConfirm, ConfirmPopup, FloatLabel, InputText, InputNumber,
-    FileUpload, Message, InputGroup, InputGroupAddon
+    FileUpload, Message, InputGroup, InputGroupAddon, MultiSelect,
 } from 'primevue';
 import { formatBytes } from '@/lib/utils';
 import { Influencer, Platform } from '@/types/model';
 import { ref } from 'vue';
 
+interface Niche {
+    id: string;
+    name: string;
+}
+
 interface Props {
     item: Influencer;
+    niches: Niche[];
 }
 
 const props = defineProps<Props>();
@@ -63,6 +69,7 @@ interface InfluencerForm {
     status: 'active' | 'inactive' | 'banned',
     photo: File | null,
     keyOpinionLeaders: KeyOpinionLeaderForm[],
+    niches: string[],
 }
 
 const form = useForm<InfluencerForm>({
@@ -75,7 +82,8 @@ const form = useForm<InfluencerForm>({
     email: props.item.email,
     status: props.item.status,
     photo: null,
-    keyOpinionLeaders: props.item?.key_opinion_leaders as KeyOpinionLeaderForm[] ?? [],
+    keyOpinionLeaders: (props.item?.key_opinion_leaders ?? []) as KeyOpinionLeaderForm[],
+    niches: props.item.niches?.map(n => n.id) ?? [],
 });
 
 const newKOLDialog = ref<boolean>(false);
@@ -216,6 +224,21 @@ const submit = () => {
                         </FloatLabel>
                         <Message v-if="form.errors.email" severity="error" size="small" variant="simple">
                             {{ form.errors.email }}
+                        </Message>
+                    </div>
+                    <div class="grid gap-2">
+                        <FloatLabel variant="on">
+                            <MultiSelect
+                                v-model="form.niches"
+                                input-id="niches"
+                                :options="niches"
+                                option-label="name" filter
+                                option-value="id" fluid
+                                :max-selected-labels="3" class="w-full" />
+                            <label for="niches" class="text-sm">Niches (optional)</label>
+                        </FloatLabel>
+                        <Message v-if="form.errors.niches" severity="error" size="small" variant="simple">
+                            {{ form.errors.niches }}
                         </Message>
                     </div>
                     <div class="grid gap-2">

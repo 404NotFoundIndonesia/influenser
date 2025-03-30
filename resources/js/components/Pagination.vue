@@ -30,7 +30,7 @@ onMounted(() => {
     <Paginator
         @page="pageChange"
         :first
-        :rowsPerPageOptions="[10, 20, 30, 40, 50]"
+        :rowsPerPageOptions="[5, 10, 20, 25, 50]"
         :totalRecords="paginator.total"
         :rows="paginator.per_page" >
         <template #start>

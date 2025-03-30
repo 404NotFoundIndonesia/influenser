@@ -8,7 +8,10 @@ import {
 } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { FolderGit, HandHeartIcon, LayoutGrid } from 'lucide-vue-next';
+import {
+    FolderGit, HandHeartIcon, LayoutGrid,
+    BookmarkCheck,
+} from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -17,6 +20,12 @@ const mainNavItems: NavItem[] = [
         href: route('dashboard'),
         icon: LayoutGrid,
         isActive: route().current('dashboard'),
+    },
+    {
+        title: 'Niche',
+        href: route('niche.index'),
+        icon: BookmarkCheck,
+        isActive: route().current('niche.*'),
     },
     {
         title: 'Influencer',

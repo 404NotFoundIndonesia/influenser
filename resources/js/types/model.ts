@@ -59,6 +59,8 @@ export interface KeyOpinionLeader {
     avg_shares: number;
     avg_comments: number;
     endorsement_rate: number;
+    created_at: Date;
+    updated_at: Date;
 }
 
 export interface Influencer {
@@ -71,8 +73,20 @@ export interface Influencer {
     email: string|null;
     status: InfluencerStatus;
     profile_picture_path: string|null;
-    created_at: string|null;
-    updated_at: string|null;
     picture_url: string|null;
-    key_opinion_leaders?: KeyOpinionLeader[];
+    key_opinion_leaders?: KeyOpinionLeader[] | any[];
+    niches?: Niche[],
+    created_at: Date;
+    updated_at: Date;
+}
+
+export interface Niche {
+    id: string;
+    name: string;
+    slug: string;
+    description: string | null;
+    icon: string;
+    active: boolean;
+    created_at: Date;
+    updated_at: Date;
 }

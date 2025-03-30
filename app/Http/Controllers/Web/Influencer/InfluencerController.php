@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Influencer\StoreInfluencerRequest;
 use App\Http\Requests\Influencer\UpdateInfluencerRequest;
 use App\Models\Influencer;
+use App\Models\Niche;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -20,7 +21,7 @@ class InfluencerController extends Controller
     public function index(Request $request): Response
     {
         return Inertia::render('influencer/Index', [
-            'items' => Influencer::with(['key_opinion_leaders'])
+            'items' => Influencer::with(['key_opinion_leaders', 'niches'])
                 ->filter($request->query('filter'))
                 ->render($request->query('size'))
         ]);
@@ -31,7 +32,9 @@ class InfluencerController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('influencer/Create');
+        return Inertia::render('influencer/Create', [
+            'niches' => Niche::all(['id', 'name']),
+        ]);
     }
 
     /**
@@ -52,6 +55,10 @@ class InfluencerController extends Controller
                 $influencer->key_opinion_leaders()->create($key);
             }
 
+            if (count($request->input('niches', [])) > 0) {
+                $influencer->niches()->sync($request->input('niches'));
+            }
+
             return redirect()->route('influencer.show', ['influencer' => $influencer])->with('success', 'Influencer created successfully.');
         } catch (\Throwable $exception) {
             Log::error($exception->getMessage(), $exception->getTrace());
@@ -65,7 +72,7 @@ class InfluencerController extends Controller
      */
     public function show(Influencer $influencer): Response
     {
-        $influencer->load(['key_opinion_leaders']);
+        $influencer->load(['key_opinion_leaders', 'niches']);
         return Inertia::render('influencer/Show', [
             'item' => $influencer,
         ]);
@@ -76,9 +83,10 @@ class InfluencerController extends Controller
      */
     public function edit(Influencer $influencer): Response
     {
-        $influencer->load(['key_opinion_leaders']);
+        $influencer->load(['key_opinion_leaders', 'niches']);
         return Inertia::render('influencer/Edit', [
-            'item' => $influencer
+            'item' => $influencer,
+            'niches' => Niche::all(['id', 'name']),
         ]);
     }
 
@@ -109,6 +117,10 @@ class InfluencerController extends Controller
                 }
             }
 
+            if (count($request->input('niches', [])) > 0) {
+                $influencer->niches()->sync($request->input('niches'));
+            }
+
             return back()->with('success', 'Influencer updated successfully.');
         } catch (\Throwable $exception) {
             Log::error($exception->getMessage(), $exception->getTrace());
@@ -137,7 +149,7 @@ class InfluencerController extends Controller
     {
         try {
             Influencer::query()
-                ->whereIn('id', $request->input('ids'))
+                ->whereIn('id', $request->input('ids', []))
                 ->delete();
 
             return back()->with('success', 'Influencer deleted successfully.');

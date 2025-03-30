@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait Paginate
 {
-    protected int $sizePerPage = 10;
+    protected int $sizePerPage = 5;
 
     public function scopeRender(Builder $query, ?int $page = null): LengthAwarePaginator
     {

@@ -2,7 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Paginate, Influencer, type InfluencerStatus, Platform } from '@/types/model';
+import { Paginate, Influencer, type InfluencerStatus, Platform, KeyOpinionLeader } from '@/types/model';
 import { FilterMatchMode } from '@primevue/core/api';
 import Pagination from '@/components/Pagination.vue';
 import {
@@ -12,6 +12,7 @@ import {
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import { ref, watch } from 'vue';
+import { digitFormatter } from '@/lib/utils';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -32,9 +33,9 @@ const confirm = useConfirm();
 const initFilter = () => {
     filters.value = {
         name: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        phone: { value: null, matchMode: FilterMatchMode.CONTAINS },
         status: { value: null, matchMode: FilterMatchMode.EQUALS },
-        'key_opinion_leaders.platform': { value: null, matchMode: FilterMatchMode.EQUALS }
+        'niches.name': { value: null, matchMode: FilterMatchMode.CONTAINS },
+        'key_opinion_leaders.platform': { value: null, matchMode: FilterMatchMode.EQUALS },
     };
 };
 
@@ -152,20 +153,20 @@ watch(filters, (newFilters) => {
                         </div>
                     </template>
                 </Column>
-                <Column field="phone" header="Phone Number">
-                    <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" placeholder="Search by phone number" />
-                    </template>
-                </Column>
                 <Column field="key_opinion_leaders.platform" header="Platform">
                     <template #body="{ data }">
-                        <div class="flex gap-2">
-                            <template v-for="keyOpinionLeader in data.key_opinion_leaders" :key="keyOpinionLeader.id">
-                                <i
-                                    :class="`pi pi-${keyOpinionLeader.platform.toLowerCase()}`"
-                                    v-tooltip="keyOpinionLeader.platform"
-                                    style="font-size: 1rem"></i>
-                            </template>
+                        <div class="flex flex-col gap-y-1">
+                            <div class="flex gap-2">
+                                <template v-for="keyOpinionLeader in data.key_opinion_leaders" :key="keyOpinionLeader.id">
+                                    <a :href="keyOpinionLeader.link" target="_blank">
+                                        <i :class="`pi pi-${keyOpinionLeader.platform.toLowerCase()}`"
+                                           v-tooltip="`${digitFormatter(keyOpinionLeader.followers)} followers`" style="font-size: 1rem"></i>
+                                    </a>
+                                </template>
+                            </div>
+                            <span class="font-medium">
+                                total {{ digitFormatter(data.key_opinion_leaders?.reduce((sum: number, item: KeyOpinionLeader) => sum + item.followers, 0)) }} followers
+                            </span>
                         </div>
                     </template>
                     <template #filter="{ filterModel }">
@@ -174,6 +175,20 @@ watch(filters, (newFilters) => {
                             :options="Object.entries(Platform).map(([key, value]) => ({ code: key, name: value }))"
                             placeholder="Select One" show-clear>
                         </Select>
+                    </template>
+                </Column>
+                <Column field="niches.name" header="Niche">
+                    <template #body="{ data }">
+                        <div class="flex gap-2">
+                            <div class="flex flex-wrap justify-between gap-1">
+                                <div class="bg-slate-100 px-2 rounded-lg" v-for="niche in data.niches" :key="niche.id">
+                                    {{ niche.name }}
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" placeholder="Search by niche" />
                     </template>
                 </Column>
                 <Column field="status" header="Status">

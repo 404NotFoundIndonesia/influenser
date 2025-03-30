@@ -21,7 +21,7 @@ class InfluencerFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'bio' => $this->faker->text(),
-            'location' => $this->faker->address(),
+            'location' => $this->faker->city(),
             'phone' => $this->faker->phoneNumber(),
             'whatsapp' => $this->faker->phoneNumber(),
             'email' => $this->faker->unique()->safeEmail(),
