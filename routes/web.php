@@ -26,6 +26,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/influencer/{influencer}', [\App\Http\Controllers\Web\Influencer\InfluencerController::class, 'destroy'])->name('influencer.destroy');
 
     Route::delete('/influencer/{influencer}/kol/{keyOpinionLeader}', [\App\Http\Controllers\Web\Influencer\KeyOpinionLeaderController::class, 'destroy'])->name('influencer.key-opinion-leader.destroy');
+
+    Route::get('/campaign', [\App\Http\Controllers\Web\Campaign\CampaignController::class, 'index'])->name('campaign.index');
+    Route::post('/campaign', [\App\Http\Controllers\Web\Campaign\CampaignController::class, 'store'])->name('campaign.store');
+    Route::get('/campaign/{campaign}', [\App\Http\Controllers\Web\Campaign\CampaignController::class, 'show'])->name('campaign.show');
+    Route::put('/campaign/{campaign}', [\App\Http\Controllers\Web\Campaign\CampaignController::class, 'update'])->name('campaign.update');
+    Route::delete('/campaign', [\App\Http\Controllers\Web\Campaign\CampaignController::class, 'massDestroy'])->name('campaign.mass-destroy');
+    Route::delete('/campaign/{campaign}', [\App\Http\Controllers\Web\Campaign\CampaignController::class, 'destroy'])->name('campaign.destroy');
 });
 
 

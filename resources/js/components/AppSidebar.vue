@@ -10,7 +10,7 @@ import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
 import {
     FolderGit, HandHeartIcon, LayoutGrid,
-    BookmarkCheck,
+    BookmarkCheck, Flag
 } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
@@ -32,6 +32,12 @@ const mainNavItems: NavItem[] = [
         href: route('influencer.index'),
         icon: HandHeartIcon,
         isActive: route().current('influencer.*'),
+    },
+    {
+        title: 'Campaign',
+        href: route('campaign.index'),
+        icon: Flag,
+        isActive: route().current('campaign.*'),
     },
 ];
 

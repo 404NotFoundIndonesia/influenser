@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Web\Essential;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Niche\StoreNicheRequest;
 use App\Http\Requests\Niche\UpdateNicheRequest;
-use App\Models\Influencer;
 use App\Models\Niche;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
