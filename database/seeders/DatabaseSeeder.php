@@ -17,10 +17,5 @@ class DatabaseSeeder extends Seeder
             'name' => 'Iqbal Effendi',
             'email' => 'iqbaleff214@gmail.com',
         ]);
-
-        $this->call([
-            InfluencerSeeder::class,
-            NicheSeeder::class,
-        ]);
     }
 }

@@ -65,6 +65,16 @@
    ```bash
    php artisan storage:link
    ```
+7. **Login**
+   
+   You can log in with the following credential:
+   - email: `iqbaleff214@gmail.com`
+   - password: `password`
+
+8. **Dummy Data (optional)**
+   ```bash
+   php artisan db:seed --class=DummySeeder
+   ```
 
 ## 📜 License
 [MIT License](LICENSE).
