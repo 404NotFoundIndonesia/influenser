@@ -43,6 +43,13 @@ export enum Platform {
     Telegram = 'telegram',
 }
 
+export enum CampaignStatus {
+    Draft = 'draft',
+    Ongoing = 'ongoing',
+    Completed = 'completed',
+    Cancelled = 'cancelled',
+}
+
 export interface KeyOpinionLeader {
     id: string;
     platform: Platform;
@@ -87,6 +94,19 @@ export interface Niche {
     description: string | null;
     icon: string;
     active: boolean;
+    created_at: Date;
+    updated_at: Date;
+}
+
+export interface Campaign {
+    id: string;
+    name: string;
+    description: string;
+    start_date: Date | null;
+    end_date: Date | null;
+    status: CampaignStatus;
+    banner_path: string | null;
+    picture_url: string;
     created_at: Date;
     updated_at: Date;
 }

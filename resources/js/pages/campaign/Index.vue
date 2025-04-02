@@ -2,16 +2,18 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
-import { Paginate, type Niche } from '@/types/model';
+import { Paginate, type Campaign, CampaignStatus } from '@/types/model';
 import { FilterMatchMode } from '@primevue/core/api';
+import CampaignForm from '@/pages/campaign/index/partials/CampaignForm.vue';
 import Pagination from '@/components/Pagination.vue';
 import {
     Column, ConfirmPopup, DataTable, useConfirm,
-    Toolbar,
+    Toolbar, Select, Tag, Image,
 } from 'primevue';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import { ref, watch } from 'vue';
+import { dateHumanFormat } from '@/lib/utils';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -21,18 +23,22 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 interface Props {
-    items: Paginate<Niche>;
+    items: Paginate<Campaign>;
 }
 
 defineProps<Props>();
 
-const selected = ref<Niche[]>([]);
+const selected = ref<Campaign[]>([]);
 const filters = ref({});
 const confirm = useConfirm();
+const campaignForm = ref();
 
 const initFilter = () => {
     filters.value = {
         name: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        status: { value: null, matchMode: FilterMatchMode.EQUALS },
+        start_date: { value: null, matchMode: FilterMatchMode.DATE_AFTER },
+        end_date: { value: null, matchMode: FilterMatchMode.DATE_BEFORE },
     };
 };
 
@@ -47,7 +53,20 @@ const clearFilter = () => {
     });
 };
 
-const destroy = (event: MouseEvent, item: Niche | null) => {
+const getSeverity = (status: CampaignStatus) => {
+    switch (status) {
+        case CampaignStatus.Draft:
+            return 'secondary';
+        case CampaignStatus.Ongoing:
+            return 'info';
+        case CampaignStatus.Completed:
+            return 'success';
+        case CampaignStatus.Cancelled:
+            return 'warn';
+    }
+};
+
+const destroy = (event: MouseEvent, item: Campaign | null) => {
     confirm.require({
         target: event.currentTarget as HTMLElement,
         message: 'Are you sure you want to delete?',
@@ -63,8 +82,8 @@ const destroy = (event: MouseEvent, item: Niche | null) => {
         },
         accept: () => {
             const url = item === null ?
-                route('niche.mass-destroy') :
-                route('niche.destroy', item?.id);
+                route('campaign.mass-destroy') :
+                route('campaign.destroy', item?.id);
 
             router.delete(url, {
                 preserveScroll: true,
@@ -97,7 +116,7 @@ watch(filters, (newFilters) => {
                 <template #start>
                     <div class="flex gap-x-2">
                         <Button size="small" label="New" icon="pi pi-plus"
-                                severity="contrast" @click="null" />
+                                severity="contrast" @click="campaignForm?.open(null)" />
                         <Button size="small" label="Delete" icon="pi pi-trash"
                                 severity="danger" outlined @click="destroy($event, null)"
                                 :disabled="!selected || !selected.length" />
@@ -125,11 +144,66 @@ watch(filters, (newFilters) => {
                     <template #filter="{ filterModel }">
                         <InputText v-model="filterModel.value" type="text" placeholder="Search by campaign name" />
                     </template>
+                    <template #body="{ data }">
+                        <div class="flex gap-x-2">
+                            <Image :src="data.picture_url || ''" :alt="data.name" width="40" preview />
+                            <div class="text-xs">
+                                <h5 class="text-lg">{{ data.name }}</h5>
+
+                                <template v-if="data.start_date && data.end_date">
+                                    {{ dateHumanFormat(data.start_date) }} - {{ dateHumanFormat(data.end_date) }}
+                                </template>
+                                <template v-else-if="!data.start_date && !data.end_date">
+                                    -
+                                </template>
+                                <template v-else-if="data.start_date && !data.end_date">
+                                    <span class="text-slate-400">started at</span> {{ dateHumanFormat(data.start_date) }}
+                                </template>
+                                <template v-else-if="!data.start_date && data.end_date">
+                                    <span class="text-slate-400">until</span> {{ dateHumanFormat(data.end_date) }}
+                                </template>
+                            </div>
+                        </div>
+                    </template>
                 </Column>
-                <Column field="description" header="Description"></Column>
+                <Column field="start_date" header="Period">
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" placeholder="Search by campaign name" />
+                    </template>
+                    <template #body="{ data }">
+                        <template v-if="data.start_date && data.end_date">
+                            {{ dateHumanFormat(data.start_date) }} - {{ dateHumanFormat(data.end_date) }}
+                        </template>
+                        <template v-else-if="!data.start_date && !data.end_date">
+                            -
+                        </template>
+                        <template v-else-if="data.start_date && !data.end_date">
+                            <span class="text-slate-400">started at</span> {{ dateHumanFormat(data.start_date) }}
+                        </template>
+                        <template v-else-if="!data.start_date && data.end_date">
+                            <span class="text-slate-400">until</span> {{ dateHumanFormat(data.end_date) }}
+                        </template>
+                    </template>
+                </Column>
+                <Column field="status" header="Status">
+                    <template #body="{ data }">
+                        <Tag :value="data.status" class="capitalize" :severity="getSeverity(data.status)" />
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <Select
+                            v-model="filterModel.value" option-value="name" :option-label="(opt) => opt.name.replaceAll('_', ' ')"
+                            :options="Object.entries(CampaignStatus).map(([key, value]) => ({ code: key, name: value }))"
+                            placeholder="Select One" show-clear>
+                        </Select>
+                    </template>
+                </Column>
                 <Column class="w-24 !text-end">
                     <template #body="{data}">
                         <div class="flex gap-x-2">
+                            <Button icon="pi pi-pencil" size="small"
+                                    variant="outlined"
+                                    @click="campaignForm?.open(data)"
+                                    severity="info" rounded></Button>
                             <Button icon="pi pi-trash" size="small"
                                     variant="outlined"
                                     @click="destroy($event, data)"
@@ -141,6 +215,8 @@ watch(filters, (newFilters) => {
             </DataTable>
 
             <Pagination :paginator="items" />
+
+            <CampaignForm ref="campaignForm" />
 
             <ConfirmPopup />
         </div>

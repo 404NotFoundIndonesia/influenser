@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Campaign;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCampaignRequest extends FormRequest
@@ -11,18 +12,21 @@ class StoreCampaignRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string',
+            'description' => 'required|string',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
         ];
     }
 }

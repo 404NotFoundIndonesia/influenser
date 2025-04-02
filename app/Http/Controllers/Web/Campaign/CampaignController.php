@@ -18,6 +18,7 @@ class CampaignController extends Controller
     {
         return Inertia::render('campaign/Index', [
             'items' => Campaign::query()
+                ->latest('created_at')
                 ->filter($request->query('filter'))
                 ->render($request->query('size')),
         ]);
@@ -34,9 +35,9 @@ class CampaignController extends Controller
     {
         try {
             $input = $request->validated();
-            Campaign::query()->create($input);
+            $campaign = Campaign::query()->create($input);
 
-            return back()->with('success', 'Campaign created successfully');
+            return redirect()->route('campaign.show', $campaign)->with('success', 'Campaign created successfully');
         } catch (\Throwable $exception) {
             Log::error($exception->getMessage());
 

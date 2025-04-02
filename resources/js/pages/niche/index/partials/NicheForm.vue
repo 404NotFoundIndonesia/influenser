@@ -60,7 +60,6 @@ defineExpose({
 
 watch(visible, (visibility: boolean) => {
     if (!visibility) {
-        console.log('closed');
         niche.value = null;
         form.reset();
         form.clearErrors();

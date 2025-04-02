@@ -18,11 +18,18 @@ class CampaignFactory extends Factory
      */
     public function definition(): array
     {
+        $start = $this->faker->boolean()
+            ? $this->faker->dateTimeBetween('-1 years', 'now')
+            : null;
+        $end = $this->faker->boolean()
+            ? $this->faker->dateTimeBetween('now', '+2 years')
+            : null;
+
         return [
-            'name' => $this->faker->name(),
+            'name' => $this->faker->sentence(),
             'description' => $this->faker->text(),
-            'start_date' => $this->faker->dateTimeBetween('-1 years', 'now'),
-            'end_date' => $this->faker->dateTimeBetween('now', '+2 years'),
+            'start_date' => $start,
+            'end_date' => $end,
             'status' => $this->faker->randomElement(CampaignStatus::cases()),
         ];
     }
