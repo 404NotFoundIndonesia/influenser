@@ -17,6 +17,11 @@ enum Platform: string
     case Threads = 'threads';
     case Telegram = 'telegram';
 
+    public static function values(): array
+    {
+        return array_map(fn (self $type) => $type->value , self::cases());
+    }
+
     public function profileUrl(string $username): string
     {
         return match ($this) {

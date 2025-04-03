@@ -2,8 +2,11 @@
 
 namespace App\Http\Requests\Campaign;
 
+use App\Enum\CampaignStatus;
+use App\Models\Campaign;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreCampaignRequest extends FormRequest
 {
@@ -27,6 +30,7 @@ class StoreCampaignRequest extends FormRequest
             'description' => 'required|string',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
+            'status' => ['required', Rule::in(CampaignStatus::values())],
         ];
     }
 }

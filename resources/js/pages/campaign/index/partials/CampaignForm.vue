@@ -5,7 +5,7 @@ import {
     Textarea, DatePicker,
 } from 'primevue';
 import { useForm } from '@inertiajs/vue3';
-import { Campaign } from '@/types/model';
+import { Campaign, type CampaignStatus } from '@/types/model';
 
 const visible = ref<boolean>(false);
 const campaign = ref<Campaign | null>(null);
@@ -19,6 +19,7 @@ interface CampaignForm {
     start_date: Date | null;
     end_date: Date | null;
     period: Date[];
+    status: CampaignStatus;
 }
 
 const form = useForm<CampaignForm>({
@@ -28,6 +29,7 @@ const form = useForm<CampaignForm>({
     start_date: null,
     end_date: null,
     period: [],
+    status: 'draft' as CampaignStatus,
 });
 
 const open = (item: Campaign | null) => {

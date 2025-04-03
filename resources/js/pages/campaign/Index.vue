@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, router } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { Paginate, type Campaign, CampaignStatus } from '@/types/model';
 import { FilterMatchMode } from '@primevue/core/api';
 import CampaignForm from '@/pages/campaign/index/partials/CampaignForm.vue';
@@ -146,43 +146,31 @@ watch(filters, (newFilters) => {
                     </template>
                     <template #body="{ data }">
                         <div class="flex gap-x-2">
-                            <Image :src="data.picture_url || ''" :alt="data.name" width="40" preview />
-                            <div class="text-xs">
-                                <h5 class="text-lg">{{ data.name }}</h5>
-
-                                <template v-if="data.start_date && data.end_date">
-                                    {{ dateHumanFormat(data.start_date) }} - {{ dateHumanFormat(data.end_date) }}
-                                </template>
-                                <template v-else-if="!data.start_date && !data.end_date">
-                                    -
-                                </template>
-                                <template v-else-if="data.start_date && !data.end_date">
-                                    <span class="text-slate-400">started at</span> {{ dateHumanFormat(data.start_date) }}
-                                </template>
-                                <template v-else-if="!data.start_date && data.end_date">
-                                    <span class="text-slate-400">until</span> {{ dateHumanFormat(data.end_date) }}
-                                </template>
+                            <Image
+                                :src="data.picture_url || ''"
+                                :alt="data.name"
+                                v-if="data.banner_path"
+                                width="40"
+                                preview />
+                            <div>
+                                <Link :href="route('campaign.show', data.id)"
+                                      class="text-lg font-medium block hover:text-green-600">{{ data.name }}</Link>
+                                <div class="text-xs">
+                                    <template v-if="data.start_date && data.end_date">
+                                        {{ dateHumanFormat(data.start_date) }} - {{ dateHumanFormat(data.end_date) }}
+                                    </template>
+                                    <template v-else-if="!data.start_date && !data.end_date">
+                                        -
+                                    </template>
+                                    <template v-else-if="data.start_date && !data.end_date">
+                                        <span class="text-slate-400">started at</span> {{ dateHumanFormat(data.start_date) }}
+                                    </template>
+                                    <template v-else-if="!data.start_date && data.end_date">
+                                        <span class="text-slate-400">until</span> {{ dateHumanFormat(data.end_date) }}
+                                    </template>
+                                </div>
                             </div>
                         </div>
-                    </template>
-                </Column>
-                <Column field="start_date" header="Period">
-                    <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" placeholder="Search by campaign name" />
-                    </template>
-                    <template #body="{ data }">
-                        <template v-if="data.start_date && data.end_date">
-                            {{ dateHumanFormat(data.start_date) }} - {{ dateHumanFormat(data.end_date) }}
-                        </template>
-                        <template v-else-if="!data.start_date && !data.end_date">
-                            -
-                        </template>
-                        <template v-else-if="data.start_date && !data.end_date">
-                            <span class="text-slate-400">started at</span> {{ dateHumanFormat(data.start_date) }}
-                        </template>
-                        <template v-else-if="!data.start_date && data.end_date">
-                            <span class="text-slate-400">until</span> {{ dateHumanFormat(data.end_date) }}
-                        </template>
                     </template>
                 </Column>
                 <Column field="status" header="Status">
