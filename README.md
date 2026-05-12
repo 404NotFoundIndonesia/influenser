@@ -16,7 +16,7 @@
 - **Influencer (KOL) Management**: Add, edit, and delete influencer data along with performance metrics.
 - **Campaign Management**: Create, manage, and track the progress of endorsement campaigns.
 - **Engagement Tracking**: Analyze influencer interactions with campaigns.
-- **Notifications & Reminders**: Send automated notifications to influencers and clients.
+- **Notifications & Reminders**: Send automated notifications to influencers and clients (in-app and email).
 - **Invoices & Payments**: Manage influencer payments transparently.
 - **Dashboard Analytics**: View insights on campaign and influencer performance.
 - **CreatorDB Integration**: Fetch and add influencer data automatically from CreatorDB.
