@@ -20,6 +20,7 @@
 - **Invoices & Payments**: Manage influencer payments transparently.
 - **Dashboard Analytics**: View insights on campaign and influencer performance.
 - **CreatorDB Integration**: Fetch and add influencer data automatically from CreatorDB.
+- **Apify Scraper Integration**: Scrape social media metrics of influencer or creator from apify actors
 
 ## 🏗️ Tech Stack
 - **Frontend**: Vue.js, TailwindCSS
