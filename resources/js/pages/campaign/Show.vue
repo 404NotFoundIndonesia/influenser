@@ -4,12 +4,12 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import {
     Toolbar, Button, Image, DataTable, Column,
-    Tag, Dialog, FloatLabel, InputText, Select,
-    Message, ConfirmPopup, useConfirm,
+    Tag, Dialog, FloatLabel, InputText, InputNumber,
+    DatePicker, Select, Message, ConfirmPopup, useConfirm,
 } from 'primevue';
 import { type Campaign, type CampaignKeyOpinionLeader, type Influencer, type KeyOpinionLeader, Platform } from '@/types/model';
 import { ref, computed } from 'vue';
-import { dateHumanFormat } from '@/lib/utils';
+import { dateHumanFormat, digitFormatter } from '@/lib/utils';
 
 interface Props {
     item: Campaign;
@@ -23,6 +23,17 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Campaign', href: route('campaign.index') },
     { title: props.item.name, href: route('campaign.show', props.item.id) },
 ];
+
+// ── Summary card computed ─────────────────────────────────────────────────────
+
+const kols = computed<CampaignKeyOpinionLeader[]>(() => props.item.key_opinion_leaders ?? []);
+
+const totalKols = computed(() => kols.value.length);
+const postedCount = computed(() => kols.value.filter((k: CampaignKeyOpinionLeader) => k.pivot.posted_at !== null).length);
+const totalViews = computed(() => kols.value.reduce((s: number, k: CampaignKeyOpinionLeader) => s + (k.pivot.actual_views ?? 0), 0));
+const totalLikes = computed(() => kols.value.reduce((s: number, k: CampaignKeyOpinionLeader) => s + (k.pivot.actual_likes ?? 0), 0));
+const totalComments = computed(() => kols.value.reduce((s: number, k: CampaignKeyOpinionLeader) => s + (k.pivot.actual_comments ?? 0), 0));
+const totalShares = computed(() => kols.value.reduce((s: number, k: CampaignKeyOpinionLeader) => s + (k.pivot.actual_shares ?? 0), 0));
 
 // ── Attach KOL dialog ────────────────────────────────────────────────────────
 
@@ -58,6 +69,51 @@ const submitAttach = () => {
             attachVisible.value = false;
             attachForm.reset();
             selectedInfluencer.value = null;
+        },
+    });
+};
+
+// ── Engagement dialog ─────────────────────────────────────────────────────────
+
+const engageVisible = ref(false);
+const engageKol = ref<CampaignKeyOpinionLeader | null>(null);
+
+interface EngageForm {
+    [key: string]: any;
+    actual_views: number | null;
+    actual_likes: number | null;
+    actual_comments: number | null;
+    actual_shares: number | null;
+    posted_at: Date | null;
+}
+
+const engageForm = useForm<EngageForm>({
+    actual_views: null,
+    actual_likes: null,
+    actual_comments: null,
+    actual_shares: null,
+    posted_at: null,
+});
+
+const openEngage = (kol: CampaignKeyOpinionLeader) => {
+    engageKol.value = kol;
+    engageForm.actual_views = kol.pivot.actual_views;
+    engageForm.actual_likes = kol.pivot.actual_likes;
+    engageForm.actual_comments = kol.pivot.actual_comments;
+    engageForm.actual_shares = kol.pivot.actual_shares;
+    engageForm.posted_at = kol.pivot.posted_at ? new Date(kol.pivot.posted_at) : null;
+    engageVisible.value = true;
+};
+
+const submitEngage = () => {
+    if (!engageKol.value) return;
+    engageForm.transform((data: EngageForm) => ({
+        ...data,
+        posted_at: data.posted_at ? (data.posted_at as Date).toISOString().split('T')[0] : null,
+    })).put(route('campaign.kol.update', { campaign: props.item.id, keyOpinionLeader: engageKol.value.id }), {
+        preserveScroll: true,
+        onSuccess: () => {
+            engageVisible.value = false;
         },
     });
 };
@@ -121,6 +177,34 @@ const platformIcon = (platform: Platform) => `pi pi-${platform.toLowerCase()}`;
                 </div>
             </div>
 
+            <!-- Summary cards -->
+            <div v-if="totalKols > 0" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                <div class="rounded-lg border border-surface-200 dark:border-surface-700 p-3 flex flex-col gap-1">
+                    <span class="text-xs text-surface-400 uppercase tracking-wide">KOLs</span>
+                    <span class="text-2xl font-semibold">{{ totalKols }}</span>
+                </div>
+                <div class="rounded-lg border border-surface-200 dark:border-surface-700 p-3 flex flex-col gap-1">
+                    <span class="text-xs text-surface-400 uppercase tracking-wide">Posted</span>
+                    <span class="text-2xl font-semibold">{{ postedCount }}</span>
+                </div>
+                <div class="rounded-lg border border-surface-200 dark:border-surface-700 p-3 flex flex-col gap-1">
+                    <span class="text-xs text-surface-400 uppercase tracking-wide">Views</span>
+                    <span class="text-2xl font-semibold">{{ digitFormatter(totalViews) }}</span>
+                </div>
+                <div class="rounded-lg border border-surface-200 dark:border-surface-700 p-3 flex flex-col gap-1">
+                    <span class="text-xs text-surface-400 uppercase tracking-wide">Likes</span>
+                    <span class="text-2xl font-semibold">{{ digitFormatter(totalLikes) }}</span>
+                </div>
+                <div class="rounded-lg border border-surface-200 dark:border-surface-700 p-3 flex flex-col gap-1">
+                    <span class="text-xs text-surface-400 uppercase tracking-wide">Comments</span>
+                    <span class="text-2xl font-semibold">{{ digitFormatter(totalComments) }}</span>
+                </div>
+                <div class="rounded-lg border border-surface-200 dark:border-surface-700 p-3 flex flex-col gap-1">
+                    <span class="text-xs text-surface-400 uppercase tracking-wide">Shares</span>
+                    <span class="text-2xl font-semibold">{{ digitFormatter(totalShares) }}</span>
+                </div>
+            </div>
+
             <!-- KOL section -->
             <div class="flex flex-col gap-3">
                 <div class="flex items-center justify-between">
@@ -130,7 +214,7 @@ const platformIcon = (platform: Platform) => `pi pi-${platform.toLowerCase()}`;
                 </div>
 
                 <DataTable
-                    :value="item.key_opinion_leaders ?? []"
+                    :value="kols"
                     show-gridlines
                     size="small"
                     :rows="10">
@@ -171,16 +255,40 @@ const platformIcon = (platform: Platform) => `pi pi-${platform.toLowerCase()}`;
 
                     <Column header="Posted">
                         <template #body="{ data }">
-                            {{ dateHumanFormat(data.pivot.posted_at) }}
+                            <Tag v-if="data.pivot.posted_at" severity="success"
+                                 :value="dateHumanFormat(data.pivot.posted_at)" />
+                            <span v-else class="text-surface-400 text-sm">—</span>
                         </template>
                     </Column>
 
-                    <Column class="w-20 !text-end">
+                    <Column header="Views" class="text-end">
                         <template #body="{ data }">
-                            <Button icon="pi pi-times" size="small" variant="outlined"
-                                    severity="danger" rounded
-                                    v-tooltip.top="'Remove from campaign'"
-                                    @click="detach($event, data)" />
+                            <span :class="data.pivot.actual_views !== null ? '' : 'text-surface-400 text-sm'">
+                                {{ data.pivot.actual_views !== null ? digitFormatter(data.pivot.actual_views) : '—' }}
+                            </span>
+                        </template>
+                    </Column>
+
+                    <Column header="Likes" class="text-end">
+                        <template #body="{ data }">
+                            <span :class="data.pivot.actual_likes !== null ? '' : 'text-surface-400 text-sm'">
+                                {{ data.pivot.actual_likes !== null ? digitFormatter(data.pivot.actual_likes) : '—' }}
+                            </span>
+                        </template>
+                    </Column>
+
+                    <Column class="w-24 !text-end">
+                        <template #body="{ data }">
+                            <div class="flex justify-end gap-1">
+                                <Button icon="pi pi-pencil" size="small" variant="outlined"
+                                        severity="secondary" rounded
+                                        v-tooltip.top="'Update engagement'"
+                                        @click="openEngage(data)" />
+                                <Button icon="pi pi-times" size="small" variant="outlined"
+                                        severity="danger" rounded
+                                        v-tooltip.top="'Remove from campaign'"
+                                        @click="detach($event, data)" />
+                            </div>
                         </template>
                     </Column>
                 </DataTable>
@@ -253,6 +361,85 @@ const platformIcon = (platform: Platform) => `pi pi-${platform.toLowerCase()}`;
             <Button label="Add" icon="pi pi-check"
                     :disabled="!attachForm.key_opinion_leader_id || attachForm.processing"
                     @click="submitAttach" />
+        </div>
+    </Dialog>
+
+    <!-- Engagement metrics dialog -->
+    <Dialog v-model:visible="engageVisible" modal
+            :header="engageKol ? `${engageKol.platform_name} · ${engageKol.username}` : 'Engagement'"
+            :style="{ width: '34rem' }">
+        <div class="flex flex-col gap-5 pt-2 pb-6">
+
+            <div class="grid gap-2">
+                <FloatLabel variant="on">
+                    <DatePicker v-model="engageForm.posted_at" input-id="posted_at"
+                                :fluid="true" :manual-input="false"
+                                date-format="dd/mm/yy" />
+                    <label for="posted_at" class="text-sm">Posted date</label>
+                </FloatLabel>
+                <Message v-if="engageForm.errors.posted_at"
+                         severity="error" size="small" variant="simple">
+                    {{ engageForm.errors.posted_at }}
+                </Message>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="grid gap-2">
+                    <FloatLabel variant="on">
+                        <InputNumber v-model="engageForm.actual_views" input-id="actual_views"
+                                     :fluid="true" :min="0" locale="id-ID" :min-fraction-digits="0" />
+                        <label for="actual_views" class="text-sm">Actual views</label>
+                    </FloatLabel>
+                    <Message v-if="engageForm.errors.actual_views"
+                             severity="error" size="small" variant="simple">
+                        {{ engageForm.errors.actual_views }}
+                    </Message>
+                </div>
+
+                <div class="grid gap-2">
+                    <FloatLabel variant="on">
+                        <InputNumber v-model="engageForm.actual_likes" input-id="actual_likes"
+                                     :fluid="true" :min="0" locale="id-ID" :min-fraction-digits="0" />
+                        <label for="actual_likes" class="text-sm">Actual likes</label>
+                    </FloatLabel>
+                    <Message v-if="engageForm.errors.actual_likes"
+                             severity="error" size="small" variant="simple">
+                        {{ engageForm.errors.actual_likes }}
+                    </Message>
+                </div>
+
+                <div class="grid gap-2">
+                    <FloatLabel variant="on">
+                        <InputNumber v-model="engageForm.actual_comments" input-id="actual_comments"
+                                     :fluid="true" :min="0" locale="id-ID" :min-fraction-digits="0" />
+                        <label for="actual_comments" class="text-sm">Actual comments</label>
+                    </FloatLabel>
+                    <Message v-if="engageForm.errors.actual_comments"
+                             severity="error" size="small" variant="simple">
+                        {{ engageForm.errors.actual_comments }}
+                    </Message>
+                </div>
+
+                <div class="grid gap-2">
+                    <FloatLabel variant="on">
+                        <InputNumber v-model="engageForm.actual_shares" input-id="actual_shares"
+                                     :fluid="true" :min="0" locale="id-ID" :min-fraction-digits="0" />
+                        <label for="actual_shares" class="text-sm">Actual shares</label>
+                    </FloatLabel>
+                    <Message v-if="engageForm.errors.actual_shares"
+                             severity="error" size="small" variant="simple">
+                        {{ engageForm.errors.actual_shares }}
+                    </Message>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="flex justify-end gap-2">
+            <Button label="Cancel" severity="secondary" @click="engageVisible = false" />
+            <Button label="Save" icon="pi pi-check"
+                    :disabled="engageForm.processing"
+                    @click="submitEngage" />
         </div>
     </Dialog>
 

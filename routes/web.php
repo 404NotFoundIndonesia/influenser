@@ -35,6 +35,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/campaign/{campaign}', [\App\Http\Controllers\Web\Campaign\CampaignController::class, 'destroy'])->name('campaign.destroy');
 
     Route::post('/campaign/{campaign}/kol', [\App\Http\Controllers\Web\Campaign\CampaignKolController::class, 'store'])->name('campaign.kol.store');
+    Route::put('/campaign/{campaign}/kol/{keyOpinionLeader}', [\App\Http\Controllers\Web\Campaign\CampaignKolController::class, 'update'])->name('campaign.kol.update');
     Route::delete('/campaign/{campaign}/kol/{keyOpinionLeader}', [\App\Http\Controllers\Web\Campaign\CampaignKolController::class, 'destroy'])->name('campaign.kol.destroy');
 });
 

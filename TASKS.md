@@ -56,7 +56,7 @@ Tracks all remaining implementation work derived from [PRD.md](PRD.md).
 ## Section 2 — Engagement Tracking
 > Implements F5. Depends on Section 1 (pivot table must exist).
 
-- [ ] **T2.1 — Backend: update engagement metrics on pivot**
+- [x] **T2.1 — Backend: update engagement metrics on pivot**
   - Add `update(Request $request, Campaign $campaign, KeyOpinionLeader $kol)` to `CampaignKolController`.
   - Validates and saves: `actual_views`, `actual_likes`, `actual_comments`, `actual_shares`, `posted_at`.
   - Route: `PUT /campaign/{campaign}/kol/{kol}`.
@@ -66,14 +66,14 @@ Tracks all remaining implementation work derived from [PRD.md](PRD.md).
     - PUT with only `posted_at` (others null) → assert only `posted_at` changed, others remain null.
     - PUT with non-attached KOL → assert 404.
 
-- [ ] **T2.2 — Frontend: per-KOL engagement input on Campaign Show**
+- [x] **T2.2 — Frontend: per-KOL engagement input on Campaign Show**
   - Extend the KOL row (from T1.5) with an inline edit or modal: input fields for actual metrics and posted date.
   - Show two columns side by side: "Contracted" (KOL's `endorsement_rate`, formatted) and "Actual" (sum of actual metrics).
   - Submit calls the T2.1 endpoint.
   - **DoD**: User can enter actual post metrics for each KOL; data persists and reflects correctly on page reload.
   - **Test**: No backend test. Covered by T2.1 feature test.
 
-- [ ] **T2.3 — Frontend: campaign-level engagement summary card**
+- [x] **T2.3 — Frontend: campaign-level engagement summary card**
   - On Campaign Show, add a summary card above the KOL table.
   - Shows: total KOLs attached, total posted (count where `posted_at` not null), sum of `actual_views`, sum of `actual_likes`.
   - **DoD**: Card values recalculate from the data already passed to the page; no extra query needed.
