@@ -1,45 +1,50 @@
-name: linter
+name: Lint
 
 on:
   push:
-    branches:
-      - develop
-      - main
+    branches: [main, develop]
   pull_request:
-    branches:
-      - develop
-      - main
-
-permissions:
-  contents: write
+    branches: [main, develop]
 
 jobs:
-  quality:
+  lint:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
+          tools: composer:v2
+          coverage: none
 
-      - name: Install Dependencies
-        run: |
-          composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-          npm install
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
 
-      - name: Run Pint
-        run: vendor/bin/pint
+      - name: Cache Composer Dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
 
-      - name: Format Frontend
-        run: npm run format
+      - name: Install PHP Dependencies
+        run: composer install --no-interaction --prefer-dist --no-scripts
 
-      - name: Lint Frontend
-        run: npm run lint
+      - name: Install Node Dependencies
+        run: npm ci
 
-      # - name: Commit Changes
-      #   uses: stefanzweifel/git-auto-commit-action@v5
-      #   with:
-      #     commit_message: fix code style
-      #     commit_options: '--no-verify'
+      - name: Check PHP Code Style (Pint)
+        run: vendor/bin/pint --test
+
+      - name: Check Frontend Formatting (Prettier)
+        run: npm run format:check
+
+      - name: Lint Frontend (ESLint)
+        run: npx eslint .
