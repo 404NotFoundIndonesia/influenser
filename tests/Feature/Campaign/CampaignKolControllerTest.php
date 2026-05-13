@@ -4,6 +4,8 @@ use App\Models\Campaign;
 use App\Models\Influencer;
 use App\Models\KeyOpinionLeader;
 use App\Models\User;
+use App\Notifications\CampaignBriefNotification;
+use Illuminate\Support\Facades\Notification;
 
 // ── Auth guard ────────────────────────────────────────────────────────────────
 
@@ -237,6 +239,46 @@ test('updated engagement metrics are visible in campaign show props', function (
             ->where('item.key_opinion_leaders.0.pivot.actual_comments', 75)
             ->where('item.key_opinion_leaders.0.pivot.actual_shares', 20)
         );
+});
+
+// ── T3.4 — Auto-dispatch notification ────────────────────────────────────────
+
+test('attaching kol notifies influencer when they have an email', function () {
+    Notification::fake();
+
+    $user       = User::factory()->create();
+    $campaign   = Campaign::factory()->create();
+    $influencer = Influencer::factory()->create(['email' => 'creator@example.com']);
+    $kol        = KeyOpinionLeader::factory()->create(['influencer_id' => $influencer->id]);
+
+    $this->actingAs($user)
+        ->post(route('campaign.kol.store', $campaign), [
+            'key_opinion_leader_id' => $kol->id,
+        ])
+        ->assertRedirect();
+
+    Notification::assertSentTo(
+        $influencer,
+        CampaignBriefNotification::class,
+        fn ($n) => $n->campaign->is($campaign) && $n->kol->is($kol),
+    );
+});
+
+test('attaching kol does not notify when influencer has no email', function () {
+    Notification::fake();
+
+    $user       = User::factory()->create();
+    $campaign   = Campaign::factory()->create();
+    $influencer = Influencer::factory()->create(['email' => null]);
+    $kol        = KeyOpinionLeader::factory()->create(['influencer_id' => $influencer->id]);
+
+    $this->actingAs($user)
+        ->post(route('campaign.kol.store', $campaign), [
+            'key_opinion_leader_id' => $kol->id,
+        ])
+        ->assertRedirect();
+
+    Notification::assertNothingSent();
 });
 
 test('campaign show page includes influencers prop', function () {

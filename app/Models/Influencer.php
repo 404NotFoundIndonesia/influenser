@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Notifications\Notifiable;
 
 class Influencer extends Model
 {
@@ -18,6 +19,7 @@ class Influencer extends Model
     use HasPicture;
     use Paginate;
     use Filterable;
+    use Notifiable;
 
     protected static function boot(): void
     {

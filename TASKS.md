@@ -84,7 +84,7 @@ Tracks all remaining implementation work derived from [PRD.md](PRD.md).
 ## Section 3 — Notifications & Reminders
 > Implements F6. Independent of Sections 1–2, but T3.4 must be wired after T1.4 and T4.3 are done.
 
-- [ ] **T3.1 — Notification classes**
+- [x] **T3.1 — Notification classes**
   - `App\Notifications\CampaignBriefNotification` — implements `toMail()`. Accepts a `Campaign` and `KeyOpinionLeader`. Sends to influencer's email.
   - `App\Notifications\PaymentConfirmedNotification` — implements `toMail()`. Accepts an `Invoice`. Sends to influencer's email.
   - **DoD**: Both classes exist and can be dispatched via `Notification::send()` or `$notifiable->notify()`. Confirmed with `php artisan tinker`.
@@ -93,14 +93,14 @@ Tracks all remaining implementation work derived from [PRD.md](PRD.md).
     - Assert mail body contains campaign name / invoice amount respectively.
     - Assert notification targets the correct email address.
 
-- [ ] **T3.2 — Email Blade templates**
+- [x] **T3.2 — Email Blade templates**
   - `resources/views/mail/campaign-brief.blade.php`: campaign name, description, start/end dates, deliverable, KOL platform.
   - `resources/views/mail/payment-confirmed.blade.php`: invoice amount, campaign name, KOL, paid date.
   - Use Laravel's `markdown` mailable format for consistent styling.
   - **DoD**: Templates render without errors. Preview accessible via `Route::get('/mailable/brief', ...)` in local env.
   - **Test**: Covered by T3.1 unit tests (notification renders the template; any Blade error surfaces there).
 
-- [ ] **T3.3 — Scheduled milestone reminder jobs**
+- [x] **T3.3 — Scheduled milestone reminder jobs**
   - `App\Jobs\CampaignStartReminderJob` — notifies campaign owner 1 day before `start_date` via a new `CampaignStartReminderNotification`.
   - `App\Jobs\CampaignDeadlineReminderJob` — notifies campaign owner 1 day before `end_date`.
   - Register both in `routes/console.php` using `Schedule::call()->daily()`, querying campaigns where the relevant date is tomorrow.
@@ -110,7 +110,7 @@ Tracks all remaining implementation work derived from [PRD.md](PRD.md).
     - Create a campaign with `start_date = 3 days away`. Assert no notification sent.
     - Mirror for `CampaignDeadlineReminderJob`.
 
-- [ ] **T3.4 — Auto-dispatch on key events**
+- [x] **T3.4 — Auto-dispatch on key events**
   - In `CampaignKolController::store` (T1.4): after attaching a KOL, if the influencer has an email, dispatch `CampaignBriefNotification`.
   - In `InvoiceController::update` (T4.3): after status changes to `paid`, dispatch `PaymentConfirmedNotification`.
   - **DoD**: Email triggered automatically in both flows. No notification sent if influencer has no email. *(Wire this last — depends on T1.4 and T4.3 both being done.)*

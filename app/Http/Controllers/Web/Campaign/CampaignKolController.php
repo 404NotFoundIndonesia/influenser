@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web\Campaign;
 use App\Http\Controllers\Controller;
 use App\Models\Campaign;
 use App\Models\KeyOpinionLeader;
+use App\Notifications\CampaignBriefNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -24,6 +25,11 @@ class CampaignKolController extends Controller
                     'deliverable' => $request->deliverable,
                 ],
             ]);
+
+            $kol = KeyOpinionLeader::with('influencer')->find($request->key_opinion_leader_id);
+            if ($kol?->influencer?->email) {
+                $kol->influencer->notify(new CampaignBriefNotification($campaign, $kol));
+            }
 
             return back()->with('success', 'KOL attached to campaign successfully.');
         } catch (\Throwable $exception) {
