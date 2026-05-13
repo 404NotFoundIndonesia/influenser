@@ -8,7 +8,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', fn () => Inertia::render('Dashboard'))->name('dashboard');
+    Route::get('dashboard', \App\Http\Controllers\Web\DashboardController::class)->name('dashboard');
 
     Route::get('/niche', [\App\Http\Controllers\Web\Essential\NicheController::class, 'index'])->name('niche.index');
     Route::post('/niche', [\App\Http\Controllers\Web\Essential\NicheController::class, 'store'])->name('niche.store');

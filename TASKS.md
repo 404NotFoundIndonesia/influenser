@@ -174,7 +174,7 @@ Tracks all remaining implementation work derived from [PRD.md](PRD.md).
 ## Section 5 — Dashboard Analytics
 > Implements F8. Depends on Sections 2 and 4 for full accuracy, but can be built in parallel using whatever data exists.
 
-- [ ] **T5.1 — Backend: analytics props for Dashboard**
+- [x] **T5.1 — Backend: analytics props for Dashboard**
   - Update `routes/web.php` dashboard route (or a dedicated `DashboardController`) to pass Inertia props:
     - `totalInfluencers` — count of all influencers
     - `totalCampaigns` — count of all campaigns
@@ -190,19 +190,19 @@ Tracks all remaining implementation work derived from [PRD.md](PRD.md).
     - Assert `topInfluencers` contains at most 5 entries and is sorted descending by engagement rate.
     - Assert `campaignStatusBreakdown` is an array with status keys matching `CampaignStatus` enum values.
 
-- [ ] **T5.2 — Frontend: stat cards**
+- [x] **T5.2 — Frontend: stat cards**
   - Replace the placeholder in `resources/js/pages/Dashboard.vue` with 5 stat cards: Total Influencers, Total Campaigns, Active Campaigns, Total Invoiced (Rp), Total Paid (Rp).
   - Use existing `Card` components from `components/ui/card/`.
   - **DoD**: Cards display correct values from Inertia props. Currency formatted (IDR or locale-appropriate).
   - **Test**: No backend test. Covered by T5.1 feature test (props are correct).
 
-- [ ] **T5.3 — Frontend: top influencers table**
+- [x] **T5.3 — Frontend: top influencers table**
   - Table listing top 5 influencers from `topInfluencers` prop: name, niche tags, avg engagement rate, platform badges.
   - Row is clickable, navigates to `influencer.show`.
   - **DoD**: Table renders; navigation works; empty state shown if no influencers exist.
   - **Test**: No backend test. Covered by T5.1 feature test (props contain `topInfluencers` with correct shape).
 
-- [ ] **T5.4 — Frontend: campaign status chart**
+- [x] **T5.4 — Frontend: campaign status chart**
   - Doughnut chart using PrimeVue `Chart` component (wraps Chart.js) fed from `campaignStatusBreakdown` prop.
   - Labels: Draft, Ongoing, Completed, Cancelled — with distinct colors matching status badge colors used elsewhere in the app.
   - **DoD**: Chart renders with correct data. Shows "No data" empty state if no campaigns exist.
