@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue';
-import Toast from 'primevue/toast';
 import type { BreadcrumbItemType } from '@/types';
 import { usePage } from '@inertiajs/vue3';
-import { onUnmounted, ref, watchEffect } from 'vue';
 import { useToast } from 'primevue';
+import Toast from 'primevue/toast';
+import { onUnmounted, ref, watchEffect } from 'vue';
 
 const page = usePage();
 const toast = useToast();
 
-const timeOutRef = ref<number|null>(null);
+const timeOutRef = ref<number | null>(null);
 
-watchEffect( () => {
+watchEffect(() => {
     const flashMessage = page.props.flash;
     timeOutRef.value = setTimeout(() => {
         if (flashMessage?.success) {

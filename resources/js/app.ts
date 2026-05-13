@@ -1,17 +1,17 @@
-import 'primeicons/primeicons.css'
+import 'primeicons/primeicons.css';
 import '../css/app.css';
 
 import { createInertiaApp } from '@inertiajs/vue3';
+import Aura from '@primeuix/themes/aura';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import PrimeVue from 'primevue/config';
+import ConfirmationService from 'primevue/confirmationservice';
+import ToastService from 'primevue/toastservice';
+import Tooltip from 'primevue/tooltip';
 import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from 'ziggy-js';
 import { initializeTheme } from './composables/useAppearance';
-import ConfirmationService from 'primevue/confirmationservice';
-import ToastService from 'primevue/toastservice';
-import PrimeVue from 'primevue/config';
-import Tooltip from 'primevue/tooltip';
-import Aura from '@primeuix/themes/aura';
 
 // Extend ImportMeta interface for Vite...
 declare module 'vite/client' {
@@ -41,9 +41,9 @@ createInertiaApp({
                     options: {
                         prefix: 'p',
                         darkModeSelector: 'system',
-                        cssLayer: false
-                    }
-                }
+                        cssLayer: false,
+                    },
+                },
             })
             .use(ConfirmationService)
             .use(ToastService)

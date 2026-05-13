@@ -26,19 +26,7 @@ export const estimatedFormatBytes = (bytes: number): string => {
 };
 
 export const dateHumanFormat = (value: Date | string | null): string => {
-    if (!value)
-        return '-';
-
-    const date = new Date(value);
-    return date.toLocaleDateString('en-GB', {
-        weekday: 'short', day: '2-digit',
-        month: 'short', year: 'numeric',
-    });
-};
-
-export const dateHumanFormatWithTime = (value: Date | string | null) => {
-    if (!value)
-        return '-';
+    if (!value) return '-';
 
     const date = new Date(value);
     return date.toLocaleDateString('en-GB', {
@@ -46,10 +34,24 @@ export const dateHumanFormatWithTime = (value: Date | string | null) => {
         day: '2-digit',
         month: 'short',
         year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-    }) + ' WIB';
+    });
+};
+
+export const dateHumanFormatWithTime = (value: Date | string | null) => {
+    if (!value) return '-';
+
+    const date = new Date(value);
+    return (
+        date.toLocaleDateString('en-GB', {
+            weekday: 'short',
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+        }) + ' WIB'
+    );
 };
 
 export const digitFormatter = (value: number): string => new Intl.NumberFormat('id-ID').format(value);

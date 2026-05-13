@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
+import Button from 'primevue/button';
 import FloatLabel from 'primevue/floatlabel';
 import InputText from 'primevue/inputtext';
-import Password from 'primevue/password';
 import Message from 'primevue/message';
-import Button from 'primevue/button';
+import Password from 'primevue/password';
 
 interface Props {
     token: string;
@@ -57,11 +57,16 @@ const submit = () => {
                         <Password
                             :invalid="form.password !== form.password_confirmation"
                             v-model="form.password_confirmation"
-                            inputId="password_confirmation" :fluid="true"
-                            :feedback="false" toggleMask />
+                            inputId="password_confirmation"
+                            :fluid="true"
+                            :feedback="false"
+                            toggleMask
+                        />
                         <label for="password_confirmation">Confirm password</label>
                     </FloatLabel>
-                    <Message v-if="form.errors.password_confirmation" severity="error" size="small" variant="simple">{{ form.errors.password_confirmation }}</Message>
+                    <Message v-if="form.errors.password_confirmation" severity="error" size="small" variant="simple">{{
+                        form.errors.password_confirmation
+                    }}</Message>
                 </div>
 
                 <Button type="submit" :fluid="true" label="Reset password" :loading="form.processing" />

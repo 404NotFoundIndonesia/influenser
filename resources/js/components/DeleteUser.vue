@@ -16,8 +16,8 @@ import {
 } from '@/components/ui/dialog';
 import Button from 'primevue/button';
 import FloatLabel from 'primevue/floatlabel';
-import Password from 'primevue/password';
 import Message from 'primevue/message';
+import Password from 'primevue/password';
 
 const passwordInput = ref<HTMLInputElement | null>(null);
 

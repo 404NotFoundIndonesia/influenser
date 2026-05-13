@@ -6,10 +6,10 @@ import { ref } from 'vue';
 
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import { type BreadcrumbItem } from '@/types';
-import FloatLabel from 'primevue/floatlabel';
-import Password from 'primevue/password';
-import Message from 'primevue/message';
 import Button from 'primevue/button';
+import FloatLabel from 'primevue/floatlabel';
+import Message from 'primevue/message';
+import Password from 'primevue/password';
 
 const breadcrumbItems: BreadcrumbItem[] = [
     {
@@ -61,10 +61,19 @@ const updatePassword = () => {
                 <form @submit.prevent="updatePassword" class="space-y-6">
                     <div class="grid gap-2">
                         <FloatLabel variant="on">
-                            <Password v-model="form.current_password" :autofocus="true" inputId="current_password" :fluid="true" :feedback="false" toggleMask />
+                            <Password
+                                v-model="form.current_password"
+                                :autofocus="true"
+                                inputId="current_password"
+                                :fluid="true"
+                                :feedback="false"
+                                toggleMask
+                            />
                             <label class="text-sm" for="current_password">Current Password</label>
                         </FloatLabel>
-                        <Message v-if="form.errors.current_password" severity="error" size="small" variant="simple">{{ form.errors.current_password }}</Message>
+                        <Message v-if="form.errors.current_password" severity="error" size="small" variant="simple">{{
+                            form.errors.current_password
+                        }}</Message>
                     </div>
 
                     <div class="grid gap-2">
@@ -80,19 +89,20 @@ const updatePassword = () => {
                             <Password
                                 :invalid="form.password !== form.password_confirmation"
                                 v-model="form.password_confirmation"
-                                inputId="password_confirmation" :fluid="true"
-                                :feedback="false" toggleMask />
+                                inputId="password_confirmation"
+                                :fluid="true"
+                                :feedback="false"
+                                toggleMask
+                            />
                             <label class="text-sm" for="password_confirmation">Confirm password</label>
                         </FloatLabel>
-                        <Message v-if="form.errors.password_confirmation" severity="error" size="small" variant="simple">{{ form.errors.password_confirmation }}</Message>
+                        <Message v-if="form.errors.password_confirmation" severity="error" size="small" variant="simple">{{
+                            form.errors.password_confirmation
+                        }}</Message>
                     </div>
 
                     <div class="flex items-center gap-4">
-                        <Button
-                            size="small"
-                            type="submit"
-                            label="Save password"
-                            :loading="form.processing" />
+                        <Button size="small" type="submit" label="Save password" :loading="form.processing" />
 
                         <Transition
                             enter-active-class="transition ease-in-out"

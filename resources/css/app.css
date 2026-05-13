@@ -1,4 +1,4 @@
-@import "tailwindcss-primeui";
+@import 'tailwindcss-primeui';
 
 @tailwind base;
 @tailwind components;

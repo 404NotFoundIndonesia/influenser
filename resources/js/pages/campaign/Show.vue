@@ -1,18 +1,39 @@
 <script setup lang="ts">
-import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
+import { dateHumanFormat, digitFormatter } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
 import {
-    Toolbar, Button, Image, DataTable, Column, TabView, TabPanel,
-    Tag, Dialog, FloatLabel, InputText, InputNumber, Textarea,
-    DatePicker, Select, Message, ConfirmPopup, FileUpload, useConfirm,
-} from 'primevue';
-import {
-    type Campaign, type CampaignKeyOpinionLeader, type Influencer,
-    type Invoice, type KeyOpinionLeader, InvoiceStatus, Platform,
+    type Campaign,
+    type CampaignKeyOpinionLeader,
+    type Influencer,
+    type Invoice,
+    type KeyOpinionLeader,
+    InvoiceStatus,
+    Platform,
 } from '@/types/model';
-import { ref, computed } from 'vue';
-import { dateHumanFormat, digitFormatter } from '@/lib/utils';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import {
+    Button,
+    Column,
+    ConfirmPopup,
+    DataTable,
+    DatePicker,
+    Dialog,
+    FileUpload,
+    FloatLabel,
+    Image,
+    InputNumber,
+    InputText,
+    Message,
+    Select,
+    TabPanel,
+    TabView,
+    Tag,
+    Textarea,
+    Toolbar,
+    useConfirm,
+} from 'primevue';
+import { computed, ref } from 'vue';
 
 interface Props {
     item: Campaign;
@@ -53,9 +74,9 @@ const selectedInfluencer = ref<Influencer | null>(null);
 const availableKols = computed<KeyOpinionLeader[]>(() => {
     if (!selectedInfluencer.value) return [];
     const current: CampaignKeyOpinionLeader[] = props.item.key_opinion_leaders ?? [];
-    const attached = new Set(current.map(k => k.id));
+    const attached = new Set(current.map((k) => k.id));
     const all: KeyOpinionLeader[] = selectedInfluencer.value.key_opinion_leaders ?? [];
-    return all.filter(k => !attached.has(k.id));
+    return all.filter((k) => !attached.has(k.id));
 });
 
 const kolOptionLabel = (k: KeyOpinionLeader) => `${k.platform_name} · ${k.username}`;
@@ -111,13 +132,17 @@ const openEngage = (kol: CampaignKeyOpinionLeader) => {
 
 const submitEngage = () => {
     if (!engageKol.value) return;
-    engageForm.transform((data: EngageForm) => ({
-        ...data,
-        posted_at: data.posted_at ? (data.posted_at as Date).toISOString().split('T')[0] : null,
-    })).put(route('campaign.kol.update', { campaign: props.item.id, keyOpinionLeader: engageKol.value.id }), {
-        preserveScroll: true,
-        onSuccess: () => { engageVisible.value = false; },
-    });
+    engageForm
+        .transform((data: EngageForm) => ({
+            ...data,
+            posted_at: data.posted_at ? (data.posted_at as Date).toISOString().split('T')[0] : null,
+        }))
+        .put(route('campaign.kol.update', { campaign: props.item.id, keyOpinionLeader: engageKol.value.id }), {
+            preserveScroll: true,
+            onSuccess: () => {
+                engageVisible.value = false;
+            },
+        });
 };
 
 // ── Detach KOL ───────────────────────────────────────────────────────────────
@@ -176,7 +201,9 @@ const openCreateInvoice = () => {
 const submitInvoice = () => {
     invoiceForm.post(route('campaign.invoice.store', props.item.id), {
         preserveScroll: true,
-        onSuccess: () => { invoiceVisible.value = false; },
+        onSuccess: () => {
+            invoiceVisible.value = false;
+        },
     });
 };
 
@@ -222,7 +249,9 @@ const submitInvoiceUpdate = () => {
         .post(route('campaign.invoice.update', { campaign: props.item.id, invoice: editingInvoice.value.id }), {
             preserveScroll: true,
             forceFormData: true,
-            onSuccess: () => { invoiceUpdateVisible.value = false; },
+            onSuccess: () => {
+                invoiceUpdateVisible.value = false;
+            },
         });
 };
 
@@ -257,28 +286,21 @@ const platformIcon = (platform: Platform) => `pi pi-${platform.toLowerCase()}`;
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 p-4">
-
             <!-- Toolbar -->
             <Toolbar>
                 <template #start>
                     <Link :href="route('campaign.index')">
-                        <Button size="small" label="Back" icon="pi pi-arrow-left"
-                                severity="secondary" variant="outlined" />
+                        <Button size="small" label="Back" icon="pi pi-arrow-left" severity="secondary" variant="outlined" />
                     </Link>
                 </template>
             </Toolbar>
 
             <!-- Campaign header -->
             <div class="flex gap-x-6">
-                <Image
-                    v-if="item.banner_path"
-                    :src="item.picture_url || ''"
-                    :alt="item.name"
-                    width="80"
-                    preview />
-                <div class="flex flex-col gap-y-1 flex-1">
+                <Image v-if="item.banner_path" :src="item.picture_url || ''" :alt="item.name" width="80" preview />
+                <div class="flex flex-1 flex-col gap-y-1">
                     <h1 class="text-xl font-medium">{{ item.name }}</h1>
-                    <p v-if="item.description" class="text-sm text-surface-500">{{ item.description }}</p>
+                    <p v-if="item.description" class="text-surface-500 text-sm">{{ item.description }}</p>
                     <div class="flex items-center gap-x-3 text-sm">
                         <Tag :value="item.status" class="capitalize" />
                         <span v-if="item.start_date || item.end_date" class="text-surface-400">
@@ -289,43 +311,41 @@ const platformIcon = (platform: Platform) => `pi pi-${platform.toLowerCase()}`;
             </div>
 
             <!-- Summary cards -->
-            <div v-if="totalKols > 0" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                <div class="rounded-lg border border-surface-200 dark:border-surface-700 p-3 flex flex-col gap-1">
-                    <span class="text-xs text-surface-400 uppercase tracking-wide">KOLs</span>
+            <div v-if="totalKols > 0" class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+                <div class="border-surface-200 dark:border-surface-700 flex flex-col gap-1 rounded-lg border p-3">
+                    <span class="text-surface-400 text-xs uppercase tracking-wide">KOLs</span>
                     <span class="text-2xl font-semibold">{{ totalKols }}</span>
                 </div>
-                <div class="rounded-lg border border-surface-200 dark:border-surface-700 p-3 flex flex-col gap-1">
-                    <span class="text-xs text-surface-400 uppercase tracking-wide">Posted</span>
+                <div class="border-surface-200 dark:border-surface-700 flex flex-col gap-1 rounded-lg border p-3">
+                    <span class="text-surface-400 text-xs uppercase tracking-wide">Posted</span>
                     <span class="text-2xl font-semibold">{{ postedCount }}</span>
                 </div>
-                <div class="rounded-lg border border-surface-200 dark:border-surface-700 p-3 flex flex-col gap-1">
-                    <span class="text-xs text-surface-400 uppercase tracking-wide">Views</span>
+                <div class="border-surface-200 dark:border-surface-700 flex flex-col gap-1 rounded-lg border p-3">
+                    <span class="text-surface-400 text-xs uppercase tracking-wide">Views</span>
                     <span class="text-2xl font-semibold">{{ digitFormatter(totalViews) }}</span>
                 </div>
-                <div class="rounded-lg border border-surface-200 dark:border-surface-700 p-3 flex flex-col gap-1">
-                    <span class="text-xs text-surface-400 uppercase tracking-wide">Likes</span>
+                <div class="border-surface-200 dark:border-surface-700 flex flex-col gap-1 rounded-lg border p-3">
+                    <span class="text-surface-400 text-xs uppercase tracking-wide">Likes</span>
                     <span class="text-2xl font-semibold">{{ digitFormatter(totalLikes) }}</span>
                 </div>
-                <div class="rounded-lg border border-surface-200 dark:border-surface-700 p-3 flex flex-col gap-1">
-                    <span class="text-xs text-surface-400 uppercase tracking-wide">Comments</span>
+                <div class="border-surface-200 dark:border-surface-700 flex flex-col gap-1 rounded-lg border p-3">
+                    <span class="text-surface-400 text-xs uppercase tracking-wide">Comments</span>
                     <span class="text-2xl font-semibold">{{ digitFormatter(totalComments) }}</span>
                 </div>
-                <div class="rounded-lg border border-surface-200 dark:border-surface-700 p-3 flex flex-col gap-1">
-                    <span class="text-xs text-surface-400 uppercase tracking-wide">Shares</span>
+                <div class="border-surface-200 dark:border-surface-700 flex flex-col gap-1 rounded-lg border p-3">
+                    <span class="text-surface-400 text-xs uppercase tracking-wide">Shares</span>
                     <span class="text-2xl font-semibold">{{ digitFormatter(totalShares) }}</span>
                 </div>
             </div>
 
             <!-- Tabs: KOLs / Invoices -->
             <TabView>
-
                 <!-- KOL tab -->
                 <TabPanel header="KOLs">
                     <div class="flex flex-col gap-3 pt-2">
                         <div class="flex items-center justify-between">
-                            <span class="text-sm text-surface-500">{{ totalKols }} KOL{{ totalKols !== 1 ? 's' : '' }} attached</span>
-                            <Button size="small" label="Add KOL" icon="pi pi-plus"
-                                    severity="contrast" @click="openAttach" />
+                            <span class="text-surface-500 text-sm">{{ totalKols }} KOL{{ totalKols !== 1 ? 's' : '' }} attached</span>
+                            <Button size="small" label="Add KOL" icon="pi pi-plus" severity="contrast" @click="openAttach" />
                         </div>
 
                         <DataTable :value="kols" show-gridlines size="small" :rows="10">
@@ -333,8 +353,7 @@ const platformIcon = (platform: Platform) => `pi pi-${platform.toLowerCase()}`;
 
                             <Column header="Influencer">
                                 <template #body="{ data }">
-                                    <Link :href="route('influencer.show', data.influencer?.id ?? '')"
-                                          class="font-medium hover:text-green-600">
+                                    <Link :href="route('influencer.show', data.influencer?.id ?? '')" class="font-medium hover:text-green-600">
                                         {{ data.influencer?.name ?? '—' }}
                                     </Link>
                                 </template>
@@ -363,8 +382,7 @@ const platformIcon = (platform: Platform) => `pi pi-${platform.toLowerCase()}`;
 
                             <Column header="Posted">
                                 <template #body="{ data }">
-                                    <Tag v-if="data.pivot.posted_at" severity="success"
-                                         :value="dateHumanFormat(data.pivot.posted_at)" />
+                                    <Tag v-if="data.pivot.posted_at" severity="success" :value="dateHumanFormat(data.pivot.posted_at)" />
                                     <span v-else class="text-surface-400 text-sm">—</span>
                                 </template>
                             </Column>
@@ -388,14 +406,24 @@ const platformIcon = (platform: Platform) => `pi pi-${platform.toLowerCase()}`;
                             <Column class="w-24 !text-end">
                                 <template #body="{ data }">
                                     <div class="flex justify-end gap-1">
-                                        <Button icon="pi pi-pencil" size="small" variant="outlined"
-                                                severity="secondary" rounded
-                                                v-tooltip.top="'Update engagement'"
-                                                @click="openEngage(data)" />
-                                        <Button icon="pi pi-times" size="small" variant="outlined"
-                                                severity="danger" rounded
-                                                v-tooltip.top="'Remove from campaign'"
-                                                @click="detach($event, data)" />
+                                        <Button
+                                            icon="pi pi-pencil"
+                                            size="small"
+                                            variant="outlined"
+                                            severity="secondary"
+                                            rounded
+                                            v-tooltip.top="'Update engagement'"
+                                            @click="openEngage(data)"
+                                        />
+                                        <Button
+                                            icon="pi pi-times"
+                                            size="small"
+                                            variant="outlined"
+                                            severity="danger"
+                                            rounded
+                                            v-tooltip.top="'Remove from campaign'"
+                                            @click="detach($event, data)"
+                                        />
                                     </div>
                                 </template>
                             </Column>
@@ -407,10 +435,15 @@ const platformIcon = (platform: Platform) => `pi pi-${platform.toLowerCase()}`;
                 <TabPanel header="Invoices">
                     <div class="flex flex-col gap-3 pt-2">
                         <div class="flex items-center justify-between">
-                            <span class="text-sm text-surface-500">{{ invoices.length }} invoice{{ invoices.length !== 1 ? 's' : '' }}</span>
-                            <Button size="small" label="Create Invoice" icon="pi pi-plus"
-                                    severity="contrast" @click="openCreateInvoice"
-                                    :disabled="kols.length === 0" />
+                            <span class="text-surface-500 text-sm">{{ invoices.length }} invoice{{ invoices.length !== 1 ? 's' : '' }}</span>
+                            <Button
+                                size="small"
+                                label="Create Invoice"
+                                icon="pi pi-plus"
+                                severity="contrast"
+                                @click="openCreateInvoice"
+                                :disabled="kols.length === 0"
+                            />
                         </div>
 
                         <DataTable :value="invoices" show-gridlines size="small" :rows="10">
@@ -430,15 +463,12 @@ const platformIcon = (platform: Platform) => `pi pi-${platform.toLowerCase()}`;
                             </Column>
 
                             <Column header="Amount" class="text-end">
-                                <template #body="{ data }">
-                                    Rp {{ digitFormatter(parseFloat(data.amount)) }}
-                                </template>
+                                <template #body="{ data }"> Rp {{ digitFormatter(parseFloat(data.amount)) }} </template>
                             </Column>
 
                             <Column header="Status">
                                 <template #body="{ data }">
-                                    <Tag :severity="invoiceStatusSeverity(data.status)"
-                                         :value="data.status" class="capitalize" />
+                                    <Tag :severity="invoiceStatusSeverity(data.status)" :value="data.status" class="capitalize" />
                                 </template>
                             </Column>
 
@@ -452,65 +482,86 @@ const platformIcon = (platform: Platform) => `pi pi-${platform.toLowerCase()}`;
                             <Column class="w-28 !text-end">
                                 <template #body="{ data }">
                                     <div class="flex justify-end gap-1">
-                                        <a :href="route('campaign.invoice.pdf', { campaign: item.id, invoice: data.id })"
-                                           target="_blank">
-                                            <Button icon="pi pi-file-pdf" size="small" variant="outlined"
-                                                    severity="secondary" rounded
-                                                    v-tooltip.top="'Download PDF'" />
+                                        <a :href="route('campaign.invoice.pdf', { campaign: item.id, invoice: data.id })" target="_blank">
+                                            <Button
+                                                icon="pi pi-file-pdf"
+                                                size="small"
+                                                variant="outlined"
+                                                severity="secondary"
+                                                rounded
+                                                v-tooltip.top="'Download PDF'"
+                                            />
                                         </a>
-                                        <Button icon="pi pi-pencil" size="small" variant="outlined"
-                                                severity="secondary" rounded
-                                                v-tooltip.top="'Edit invoice'"
-                                                @click="openInvoiceUpdate(data)" />
-                                        <Button icon="pi pi-trash" size="small" variant="outlined"
-                                                severity="danger" rounded
-                                                v-tooltip.top="'Delete invoice'"
-                                                @click="destroyInvoice($event, data)" />
+                                        <Button
+                                            icon="pi pi-pencil"
+                                            size="small"
+                                            variant="outlined"
+                                            severity="secondary"
+                                            rounded
+                                            v-tooltip.top="'Edit invoice'"
+                                            @click="openInvoiceUpdate(data)"
+                                        />
+                                        <Button
+                                            icon="pi pi-trash"
+                                            size="small"
+                                            variant="outlined"
+                                            severity="danger"
+                                            rounded
+                                            v-tooltip.top="'Delete invoice'"
+                                            @click="destroyInvoice($event, data)"
+                                        />
                                     </div>
                                 </template>
                             </Column>
                         </DataTable>
                     </div>
                 </TabPanel>
-
             </TabView>
-
         </div>
     </AppLayout>
 
     <!-- Attach KOL dialog -->
-    <Dialog v-model:visible="attachVisible" modal header="Add KOL to Campaign"
-            :style="{ width: '36rem' }">
-        <div class="flex flex-col gap-5 pt-2 pb-6">
+    <Dialog v-model:visible="attachVisible" modal header="Add KOL to Campaign" :style="{ width: '36rem' }">
+        <div class="flex flex-col gap-5 pb-6 pt-2">
             <div class="grid gap-2">
                 <FloatLabel variant="on">
-                    <Select v-model="selectedInfluencer" input-id="influencer"
-                            :options="influencers" option-label="name" :fluid="true"
-                            filter placeholder="Select an influencer"
-                            @change="attachForm.key_opinion_leader_id = ''" />
+                    <Select
+                        v-model="selectedInfluencer"
+                        input-id="influencer"
+                        :options="influencers"
+                        option-label="name"
+                        :fluid="true"
+                        filter
+                        placeholder="Select an influencer"
+                        @change="attachForm.key_opinion_leader_id = ''"
+                    />
                     <label for="influencer" class="text-sm">Influencer</label>
                 </FloatLabel>
             </div>
             <div v-if="selectedInfluencer" class="grid gap-2">
                 <FloatLabel variant="on">
-                    <Select v-model="attachForm.key_opinion_leader_id" input-id="kol"
-                            :options="availableKols" option-value="id"
-                            :option-label="kolOptionLabel" :fluid="true"
-                            :placeholder="availableKols.length ? 'Select a platform account' : 'No available KOL accounts'"
-                            :disabled="!availableKols.length" />
+                    <Select
+                        v-model="attachForm.key_opinion_leader_id"
+                        input-id="kol"
+                        :options="availableKols"
+                        option-value="id"
+                        :option-label="kolOptionLabel"
+                        :fluid="true"
+                        :placeholder="availableKols.length ? 'Select a platform account' : 'No available KOL accounts'"
+                        :disabled="!availableKols.length"
+                    />
                     <label for="kol" class="text-sm">Platform account</label>
                 </FloatLabel>
                 <Message v-if="attachForm.errors.key_opinion_leader_id" severity="error" size="small" variant="simple">
                     {{ attachForm.errors.key_opinion_leader_id }}
                 </Message>
-                <p v-if="selectedInfluencer && !availableKols.length" class="text-xs text-surface-400">
+                <p v-if="selectedInfluencer && !availableKols.length" class="text-surface-400 text-xs">
                     All KOL accounts for this influencer are already attached.
                 </p>
             </div>
             <div v-if="attachForm.key_opinion_leader_id" class="grid gap-2">
                 <FloatLabel variant="on">
-                    <InputText id="deliverable" v-model="attachForm.deliverable" :fluid="true"
-                               placeholder="e.g. 1 TikTok video, 2 IG stories" />
+                    <InputText id="deliverable" v-model="attachForm.deliverable" :fluid="true" placeholder="e.g. 1 TikTok video, 2 IG stories" />
                     <label for="deliverable" class="text-sm">Deliverable (optional)</label>
                 </FloatLabel>
                 <Message v-if="attachForm.errors.deliverable" severity="error" size="small" variant="simple">
@@ -520,50 +571,74 @@ const platformIcon = (platform: Platform) => `pi pi-${platform.toLowerCase()}`;
         </div>
         <div class="flex justify-end gap-2">
             <Button label="Cancel" severity="secondary" @click="attachVisible = false" />
-            <Button label="Add" icon="pi pi-check"
-                    :disabled="!attachForm.key_opinion_leader_id || attachForm.processing"
-                    @click="submitAttach" />
+            <Button label="Add" icon="pi pi-check" :disabled="!attachForm.key_opinion_leader_id || attachForm.processing" @click="submitAttach" />
         </div>
     </Dialog>
 
     <!-- Engagement metrics dialog -->
-    <Dialog v-model:visible="engageVisible" modal
-            :header="engageKol ? `${engageKol.platform_name} · ${engageKol.username}` : 'Engagement'"
-            :style="{ width: '34rem' }">
-        <div class="flex flex-col gap-5 pt-2 pb-6">
+    <Dialog
+        v-model:visible="engageVisible"
+        modal
+        :header="engageKol ? `${engageKol.platform_name} · ${engageKol.username}` : 'Engagement'"
+        :style="{ width: '34rem' }"
+    >
+        <div class="flex flex-col gap-5 pb-6 pt-2">
             <div class="grid gap-2">
                 <FloatLabel variant="on">
-                    <DatePicker v-model="engageForm.posted_at" input-id="posted_at"
-                                :fluid="true" :manual-input="false" date-format="dd/mm/yy" />
+                    <DatePicker v-model="engageForm.posted_at" input-id="posted_at" :fluid="true" :manual-input="false" date-format="dd/mm/yy" />
                     <label for="posted_at" class="text-sm">Posted date</label>
                 </FloatLabel>
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div class="grid gap-2">
                     <FloatLabel variant="on">
-                        <InputNumber v-model="engageForm.actual_views" input-id="actual_views"
-                                     :fluid="true" :min="0" locale="id-ID" :min-fraction-digits="0" />
+                        <InputNumber
+                            v-model="engageForm.actual_views"
+                            input-id="actual_views"
+                            :fluid="true"
+                            :min="0"
+                            locale="id-ID"
+                            :min-fraction-digits="0"
+                        />
                         <label for="actual_views" class="text-sm">Actual views</label>
                     </FloatLabel>
                 </div>
                 <div class="grid gap-2">
                     <FloatLabel variant="on">
-                        <InputNumber v-model="engageForm.actual_likes" input-id="actual_likes"
-                                     :fluid="true" :min="0" locale="id-ID" :min-fraction-digits="0" />
+                        <InputNumber
+                            v-model="engageForm.actual_likes"
+                            input-id="actual_likes"
+                            :fluid="true"
+                            :min="0"
+                            locale="id-ID"
+                            :min-fraction-digits="0"
+                        />
                         <label for="actual_likes" class="text-sm">Actual likes</label>
                     </FloatLabel>
                 </div>
                 <div class="grid gap-2">
                     <FloatLabel variant="on">
-                        <InputNumber v-model="engageForm.actual_comments" input-id="actual_comments"
-                                     :fluid="true" :min="0" locale="id-ID" :min-fraction-digits="0" />
+                        <InputNumber
+                            v-model="engageForm.actual_comments"
+                            input-id="actual_comments"
+                            :fluid="true"
+                            :min="0"
+                            locale="id-ID"
+                            :min-fraction-digits="0"
+                        />
                         <label for="actual_comments" class="text-sm">Actual comments</label>
                     </FloatLabel>
                 </div>
                 <div class="grid gap-2">
                     <FloatLabel variant="on">
-                        <InputNumber v-model="engageForm.actual_shares" input-id="actual_shares"
-                                     :fluid="true" :min="0" locale="id-ID" :min-fraction-digits="0" />
+                        <InputNumber
+                            v-model="engageForm.actual_shares"
+                            input-id="actual_shares"
+                            :fluid="true"
+                            :min="0"
+                            locale="id-ID"
+                            :min-fraction-digits="0"
+                        />
                         <label for="actual_shares" class="text-sm">Actual shares</label>
                     </FloatLabel>
                 </div>
@@ -576,15 +651,19 @@ const platformIcon = (platform: Platform) => `pi pi-${platform.toLowerCase()}`;
     </Dialog>
 
     <!-- Create Invoice dialog -->
-    <Dialog v-model:visible="invoiceVisible" modal header="Create Invoice"
-            :style="{ width: '36rem' }">
-        <div class="flex flex-col gap-5 pt-2 pb-6">
+    <Dialog v-model:visible="invoiceVisible" modal header="Create Invoice" :style="{ width: '36rem' }">
+        <div class="flex flex-col gap-5 pb-6 pt-2">
             <div class="grid gap-2">
                 <FloatLabel variant="on">
-                    <Select v-model="selectedKolForInvoice" input-id="inv-kol"
-                            :options="kols" :option-label="invoiceKolLabel"
-                            :fluid="true" placeholder="Select a KOL"
-                            @change="onInvoiceKolChange" />
+                    <Select
+                        v-model="selectedKolForInvoice"
+                        input-id="inv-kol"
+                        :options="kols"
+                        :option-label="invoiceKolLabel"
+                        :fluid="true"
+                        placeholder="Select a KOL"
+                        @change="onInvoiceKolChange"
+                    />
                     <label for="inv-kol" class="text-sm">KOL</label>
                 </FloatLabel>
                 <Message v-if="invoiceForm.errors.key_opinion_leader_id" severity="error" size="small" variant="simple">
@@ -593,8 +672,7 @@ const platformIcon = (platform: Platform) => `pi pi-${platform.toLowerCase()}`;
             </div>
             <div v-if="selectedKolForInvoice" class="grid gap-2">
                 <FloatLabel variant="on">
-                    <InputNumber v-model="invoiceForm.amount" input-id="inv-amount"
-                                 :fluid="true" :min="0" locale="id-ID" :min-fraction-digits="0" />
+                    <InputNumber v-model="invoiceForm.amount" input-id="inv-amount" :fluid="true" :min="0" locale="id-ID" :min-fraction-digits="0" />
                     <label for="inv-amount" class="text-sm">Amount (Rp)</label>
                 </FloatLabel>
                 <Message v-if="invoiceForm.errors.amount" severity="error" size="small" variant="simple">
@@ -603,29 +681,30 @@ const platformIcon = (platform: Platform) => `pi pi-${platform.toLowerCase()}`;
             </div>
             <div v-if="selectedKolForInvoice" class="grid gap-2">
                 <FloatLabel variant="on">
-                    <Textarea id="inv-notes" v-model="invoiceForm.notes" :fluid="true"
-                              rows="3" style="resize: none" />
+                    <Textarea id="inv-notes" v-model="invoiceForm.notes" :fluid="true" rows="3" style="resize: none" />
                     <label for="inv-notes" class="text-sm">Notes (optional)</label>
                 </FloatLabel>
             </div>
         </div>
         <div class="flex justify-end gap-2">
             <Button label="Cancel" severity="secondary" @click="invoiceVisible = false" />
-            <Button label="Create" icon="pi pi-check"
-                    :disabled="!selectedKolForInvoice || invoiceForm.processing"
-                    @click="submitInvoice" />
+            <Button label="Create" icon="pi pi-check" :disabled="!selectedKolForInvoice || invoiceForm.processing" @click="submitInvoice" />
         </div>
     </Dialog>
 
     <!-- Update Invoice dialog -->
-    <Dialog v-model:visible="invoiceUpdateVisible" modal header="Update Invoice"
-            :style="{ width: '34rem' }">
-        <div class="flex flex-col gap-5 pt-2 pb-6">
+    <Dialog v-model:visible="invoiceUpdateVisible" modal header="Update Invoice" :style="{ width: '34rem' }">
+        <div class="flex flex-col gap-5 pb-6 pt-2">
             <div class="grid gap-2">
                 <FloatLabel variant="on">
-                    <Select v-model="invoiceUpdateForm.status" input-id="inv-status"
-                            :options="statusOptions" option-label="label" option-value="value"
-                            :fluid="true" />
+                    <Select
+                        v-model="invoiceUpdateForm.status"
+                        input-id="inv-status"
+                        :options="statusOptions"
+                        option-label="label"
+                        option-value="value"
+                        :fluid="true"
+                    />
                     <label for="inv-status" class="text-sm">Status</label>
                 </FloatLabel>
                 <Message v-if="invoiceUpdateForm.errors.status" severity="error" size="small" variant="simple">
@@ -634,24 +713,37 @@ const platformIcon = (platform: Platform) => `pi pi-${platform.toLowerCase()}`;
             </div>
             <div class="grid gap-2">
                 <FloatLabel variant="on">
-                    <InputNumber v-model="invoiceUpdateForm.amount" input-id="inv-upd-amount"
-                                 :fluid="true" :min="0" locale="id-ID" :min-fraction-digits="0" />
+                    <InputNumber
+                        v-model="invoiceUpdateForm.amount"
+                        input-id="inv-upd-amount"
+                        :fluid="true"
+                        :min="0"
+                        locale="id-ID"
+                        :min-fraction-digits="0"
+                    />
                     <label for="inv-upd-amount" class="text-sm">Amount (Rp)</label>
                 </FloatLabel>
             </div>
             <div class="grid gap-2">
                 <FloatLabel variant="on">
-                    <Textarea id="inv-upd-notes" v-model="invoiceUpdateForm.notes" :fluid="true"
-                              rows="3" style="resize: none" />
+                    <Textarea id="inv-upd-notes" v-model="invoiceUpdateForm.notes" :fluid="true" rows="3" style="resize: none" />
                     <label for="inv-upd-notes" class="text-sm">Notes</label>
                 </FloatLabel>
             </div>
             <div class="grid gap-2">
-                <label class="text-sm text-surface-500">Payment proof (optional)</label>
-                <FileUpload mode="basic" :auto="false" accept="image/*,.pdf"
-                            :max-file-size="5242880"
-                            choose-label="Choose proof file"
-                            @select="(e) => { invoiceUpdateForm.proof = e.files[0] }" />
+                <label class="text-surface-500 text-sm">Payment proof (optional)</label>
+                <FileUpload
+                    mode="basic"
+                    :auto="false"
+                    accept="image/*,.pdf"
+                    :max-file-size="5242880"
+                    choose-label="Choose proof file"
+                    @select="
+                        (e) => {
+                            invoiceUpdateForm.proof = e.files[0];
+                        }
+                    "
+                />
                 <Message v-if="invoiceUpdateForm.errors.proof" severity="error" size="small" variant="simple">
                     {{ invoiceUpdateForm.errors.proof }}
                 </Message>
@@ -659,9 +751,7 @@ const platformIcon = (platform: Platform) => `pi pi-${platform.toLowerCase()}`;
         </div>
         <div class="flex justify-end gap-2">
             <Button label="Cancel" severity="secondary" @click="invoiceUpdateVisible = false" />
-            <Button label="Save" icon="pi pi-check"
-                    :disabled="invoiceUpdateForm.processing"
-                    @click="submitInvoiceUpdate" />
+            <Button label="Save" icon="pi pi-check" :disabled="invoiceUpdateForm.processing" @click="submitInvoiceUpdate" />
         </div>
     </Dialog>
 

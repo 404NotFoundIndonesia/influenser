@@ -3,11 +3,11 @@ import TextLink from '@/components/TextLink.vue';
 import { Checkbox } from '@/components/ui/checkbox';
 import AuthBase from '@/layouts/AuthLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
+import Button from 'primevue/button';
 import FloatLabel from 'primevue/floatlabel';
 import InputText from 'primevue/inputtext';
-import Password from 'primevue/password';
 import Message from 'primevue/message';
-import Button from 'primevue/button';
+import Password from 'primevue/password';
 
 defineProps<{
     status?: string;
@@ -58,9 +58,7 @@ const submit = () => {
                         <Checkbox v-model="form.remember" inputId="remember" value="true" />
                         <label for="remember">Remember me</label>
                     </div>
-                    <TextLink v-if="canResetPassword" :href="route('password.request')" class="text-sm" :tabindex="5">
-                        Forgot password?
-                    </TextLink>
+                    <TextLink v-if="canResetPassword" :href="route('password.request')" class="text-sm" :tabindex="5"> Forgot password? </TextLink>
                 </div>
 
                 <Button type="submit" label="Log in" :loading="form.processing" />

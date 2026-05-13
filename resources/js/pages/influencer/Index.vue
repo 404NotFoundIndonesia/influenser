@@ -1,24 +1,21 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem } from '@/types';
-import { Head, Link, router } from '@inertiajs/vue3';
-import { Paginate, Influencer, type InfluencerStatus, Platform, KeyOpinionLeader } from '@/types/model';
-import { FilterMatchMode } from '@primevue/core/api';
 import Pagination from '@/components/Pagination.vue';
-import {
-    Avatar, Column, ConfirmPopup, DataTable,
-    Tag, useConfirm, Select, Toolbar
-} from 'primevue';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { digitFormatter } from '@/lib/utils';
+import { type BreadcrumbItem } from '@/types';
+import { Influencer, type InfluencerStatus, KeyOpinionLeader, Paginate, Platform } from '@/types/model';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { FilterMatchMode } from '@primevue/core/api';
+import { Avatar, Column, ConfirmPopup, DataTable, Select, Tag, Toolbar, useConfirm } from 'primevue';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import { ref, watch } from 'vue';
-import { digitFormatter } from '@/lib/utils';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Influencer',
-        href: route('influencer.index')
-    }
+        href: route('influencer.index'),
+    },
 ];
 
 interface Props {
@@ -61,7 +58,7 @@ const getSeverity = (status: InfluencerStatus) => {
     }
 };
 
-const destroy = (event: MouseEvent, item: Influencer|null) => {
+const destroy = (event: MouseEvent, item: Influencer | null) => {
     confirm.require({
         target: event.currentTarget as HTMLElement,
         message: 'Are you sure you want to delete?',
@@ -69,37 +66,38 @@ const destroy = (event: MouseEvent, item: Influencer|null) => {
         rejectProps: {
             label: 'Cancel',
             severity: 'secondary',
-            outlined: true
+            outlined: true,
         },
         acceptProps: {
             label: 'Delete',
             severity: 'danger',
         },
         accept: () => {
-            const url = item === null ?
-                route('influencer.mass-destroy') :
-                route('influencer.destroy', item?.id);
+            const url = item === null ? route('influencer.mass-destroy') : route('influencer.destroy', item?.id);
 
             router.delete(url, {
                 preserveScroll: true,
                 preserveState: true,
-                data: { ids: selected.value.map(i => i.id) },
+                data: { ids: selected.value.map((i) => i.id) },
                 onSuccess: () => {
-                    if (item === null)
-                        selected.value = [];
-                }
+                    if (item === null) selected.value = [];
+                },
             });
         },
     });
 };
 
-watch(filters, (newFilters) => {
-    router.reload({
-        only: ['items'],
-        data: { filter: newFilters },
-        replace: true,
-    });
-}, { deep: true });
+watch(
+    filters,
+    (newFilters) => {
+        router.reload({
+            only: ['items'],
+            data: { filter: newFilters },
+            replace: true,
+        });
+    },
+    { deep: true },
+);
 </script>
 
 <template>
@@ -111,19 +109,23 @@ watch(filters, (newFilters) => {
                 <template #start>
                     <div class="flex gap-x-2">
                         <Link :href="route('influencer.create')">
-                            <Button size="small" label="New" icon="pi pi-plus"
-                                    severity="contrast" />
+                            <Button size="small" label="New" icon="pi pi-plus" severity="contrast" />
                         </Link>
-                        <Button size="small" label="Delete" icon="pi pi-trash"
-                                severity="danger" outlined @click="destroy($event, null)"
-                                :disabled="!selected || !selected.length" />
+                        <Button
+                            size="small"
+                            label="Delete"
+                            icon="pi pi-trash"
+                            severity="danger"
+                            outlined
+                            @click="destroy($event, null)"
+                            :disabled="!selected || !selected.length"
+                        />
                     </div>
                 </template>
 
                 <template #end>
                     <div class="flex gap-x-2">
-                        <Button size="small" label="Clear" icon="pi pi-filter-slash"
-                                severity="secondary" variant="outlined" @click="clearFilter" />
+                        <Button size="small" label="Clear" icon="pi pi-filter-slash" severity="secondary" variant="outlined" @click="clearFilter" />
                     </div>
                 </template>
             </Toolbar>
@@ -135,7 +137,8 @@ watch(filters, (newFilters) => {
                 v-model:selection="selected"
                 v-model:filters="filters"
                 :value="items.data"
-                table-style="min-width: 50rem">
+                table-style="min-width: 50rem"
+            >
                 <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
                 <Column field="name" header="Name">
                     <template #filter="{ filterModel }">
@@ -159,21 +162,32 @@ watch(filters, (newFilters) => {
                             <div class="flex gap-2">
                                 <template v-for="keyOpinionLeader in data.key_opinion_leaders" :key="keyOpinionLeader.id">
                                     <a :href="keyOpinionLeader.link" target="_blank">
-                                        <i :class="`pi pi-${keyOpinionLeader.platform.toLowerCase()}`"
-                                           v-tooltip="`${digitFormatter(keyOpinionLeader.followers)} followers`" style="font-size: 1rem"></i>
+                                        <i
+                                            :class="`pi pi-${keyOpinionLeader.platform.toLowerCase()}`"
+                                            v-tooltip="`${digitFormatter(keyOpinionLeader.followers)} followers`"
+                                            style="font-size: 1rem"
+                                        ></i>
                                     </a>
                                 </template>
                             </div>
                             <span class="font-medium">
-                                total {{ digitFormatter(data.key_opinion_leaders?.reduce((sum: number, item: KeyOpinionLeader) => sum + item.followers, 0)) }} followers
+                                total
+                                {{
+                                    digitFormatter(data.key_opinion_leaders?.reduce((sum: number, item: KeyOpinionLeader) => sum + item.followers, 0))
+                                }}
+                                followers
                             </span>
                         </div>
                     </template>
                     <template #filter="{ filterModel }">
                         <Select
-                            v-model="filterModel.value" option-value="name" option-label="code"
+                            v-model="filterModel.value"
+                            option-value="name"
+                            option-label="code"
                             :options="Object.entries(Platform).map(([key, value]) => ({ code: key, name: value }))"
-                            placeholder="Select One" show-clear>
+                            placeholder="Select One"
+                            show-clear
+                        >
                         </Select>
                     </template>
                 </Column>
@@ -181,7 +195,7 @@ watch(filters, (newFilters) => {
                     <template #body="{ data }">
                         <div class="flex gap-2">
                             <div class="flex flex-wrap justify-between gap-1">
-                                <div class="bg-slate-100 px-2 rounded-lg" v-for="niche in data.niches" :key="niche.id">
+                                <div class="rounded-lg bg-slate-100 px-2" v-for="niche in data.niches" :key="niche.id">
                                     {{ niche.name }}
                                 </div>
                             </div>
@@ -204,17 +218,19 @@ watch(filters, (newFilters) => {
                     </template>
                 </Column>
                 <Column class="w-24 !text-end">
-                    <template #body="{data}">
+                    <template #body="{ data }">
                         <div class="flex gap-x-2">
                             <Link :href="route('influencer.edit', data.id)">
-                                <Button icon="pi pi-pencil" size="small"
-                                        variant="outlined"
-                                        severity="info" rounded></Button>
+                                <Button icon="pi pi-pencil" size="small" variant="outlined" severity="info" rounded></Button>
                             </Link>
-                            <Button icon="pi pi-trash" size="small"
-                                    variant="outlined"
-                                    @click="destroy($event, data)"
-                                    severity="danger" rounded></Button>
+                            <Button
+                                icon="pi pi-trash"
+                                size="small"
+                                variant="outlined"
+                                @click="destroy($event, data)"
+                                severity="danger"
+                                rounded
+                            ></Button>
                         </div>
                     </template>
                 </Column>

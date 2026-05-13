@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import {
-    Dialog, Button, FloatLabel, InputText, Message,
-    Textarea,
-} from 'primevue';
-import { useForm } from '@inertiajs/vue3';
 import { Niche } from '@/types/model';
+import { useForm } from '@inertiajs/vue3';
+import { Button, Dialog, FloatLabel, InputText, Message, Textarea } from 'primevue';
+import { ref, watch } from 'vue';
 
 const visible = ref<boolean>(false);
 const niche = ref<Niche | null>(null);
@@ -28,8 +25,7 @@ const form = useForm<NicheForm>({
 
 const open = (item: Niche | null) => {
     visible.value = true;
-    if (item === null)
-        return;
+    if (item === null) return;
 
     niche.value = item;
     form._method = 'PUT';
@@ -43,9 +39,7 @@ const close = () => {
 };
 
 const submit = () => {
-    const url = niche.value === null ?
-        route('niche.store') :
-        route('niche.update', niche.value.id);
+    const url = niche.value === null ? route('niche.store') : route('niche.update', niche.value.id);
 
     form.post(url, {
         preserveState: true,
@@ -69,11 +63,10 @@ watch(visible, (visibility: boolean) => {
 
 <template>
     <Dialog v-model:visible="visible" modal header="Niche" :style="{ width: '50rem' }">
-        <div class="flex flex-col gap-6 pt-2 pb-8">
+        <div class="flex flex-col gap-6 pb-8 pt-2">
             <div class="grid gap-2">
                 <FloatLabel variant="on">
-                    <InputText :fluid="true" :autofocus="true" id="name" v-model="form.name" type="text"
-                               autocomplete="off" />
+                    <InputText :fluid="true" :autofocus="true" id="name" v-model="form.name" type="text" autocomplete="off" />
                     <label for="name" class="text-sm">Name</label>
                 </FloatLabel>
                 <Message v-if="form.errors.name" severity="error" size="small" variant="simple">
@@ -82,9 +75,7 @@ watch(visible, (visibility: boolean) => {
             </div>
             <div class="grid gap-2">
                 <FloatLabel variant="on">
-                        <Textarea fluid id="description"
-                                  v-model="form.description" rows="3" cols="30"
-                                  style="resize: none" />
+                    <Textarea fluid id="description" v-model="form.description" rows="3" cols="30" style="resize: none" />
                     <label for="description" class="text-sm">Description</label>
                 </FloatLabel>
                 <Message v-if="form.errors.description" severity="error" size="small" variant="simple">

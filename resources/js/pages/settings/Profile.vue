@@ -6,10 +6,10 @@ import HeadingSmall from '@/components/HeadingSmall.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { type BreadcrumbItem, type SharedData, type User } from '@/types';
-import InputText from 'primevue/inputtext';
-import FloatLabel from 'primevue/floatlabel';
-import Message from 'primevue/message';
 import Button from 'primevue/button';
+import FloatLabel from 'primevue/floatlabel';
+import InputText from 'primevue/inputtext';
+import Message from 'primevue/message';
 
 interface Props {
     mustVerifyEmail: boolean;
@@ -84,11 +84,7 @@ const submit = () => {
                     </div>
 
                     <div class="flex items-center gap-4">
-                        <Button
-                            size="small"
-                            type="submit"
-                            label="Save"
-                            :loading="form.processing" />
+                        <Button size="small" type="submit" label="Save" :loading="form.processing" />
 
                         <Transition
                             enter-active-class="transition ease-in-out"

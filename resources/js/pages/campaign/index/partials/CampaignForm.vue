@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import {
-    Dialog, Button, FloatLabel, InputText, Message,
-    Textarea, DatePicker,
-} from 'primevue';
-import { useForm } from '@inertiajs/vue3';
 import { Campaign, type CampaignStatus } from '@/types/model';
+import { useForm } from '@inertiajs/vue3';
+import { Button, DatePicker, Dialog, FloatLabel, InputText, Message, Textarea } from 'primevue';
+import { ref, watch } from 'vue';
 
 const visible = ref<boolean>(false);
 const campaign = ref<Campaign | null>(null);
@@ -34,8 +31,7 @@ const form = useForm<CampaignForm>({
 
 const open = (item: Campaign | null) => {
     visible.value = true;
-    if (item === null)
-        return;
+    if (item === null) return;
 
     campaign.value = item;
     form._method = 'PUT';
@@ -56,11 +52,9 @@ const close = () => {
 };
 
 const submit = () => {
-    const url = campaign.value === null ?
-        route('campaign.store') :
-        route('campaign.update', campaign.value.id);
+    const url = campaign.value === null ? route('campaign.store') : route('campaign.update', campaign.value.id);
 
-    form.transform(data => ({
+    form.transform((data) => ({
         ...data,
         start_date: data.period[0] ? new Date(data.period[0]) : null,
         end_date: data.period[1] ? new Date(data.period[1]) : null,
@@ -86,12 +80,11 @@ watch(visible, (visibility: boolean) => {
 
 <template>
     <Dialog v-model:visible="visible" modal header="Campaign" :style="{ width: '50rem' }">
-        <div class="flex flex-col gap-6 pt-2 pb-8">
-            <div class="grid md:grid-cols-2 gap-6">
+        <div class="flex flex-col gap-6 pb-8 pt-2">
+            <div class="grid gap-6 md:grid-cols-2">
                 <div class="grid gap-2">
                     <FloatLabel variant="on">
-                        <InputText :fluid="true" :autofocus="true" id="name" v-model="form.name" type="text"
-                                   autocomplete="off" />
+                        <InputText :fluid="true" :autofocus="true" id="name" v-model="form.name" type="text" autocomplete="off" />
                         <label for="name" class="text-sm">Name</label>
                     </FloatLabel>
                     <Message v-if="form.errors.name" severity="error" size="small" variant="simple">
@@ -100,8 +93,7 @@ watch(visible, (visibility: boolean) => {
                 </div>
                 <div class="grid gap-2">
                     <FloatLabel variant="on">
-                        <DatePicker fluid v-model="form.period" input-id="start_date"
-                                    selection-mode="range" :manual-input="false" />
+                        <DatePicker fluid v-model="form.period" input-id="start_date" selection-mode="range" :manual-input="false" />
                         <label for="start_date" class="text-sm">Period</label>
                     </FloatLabel>
                     <Message v-if="form.errors.start_date" severity="error" size="small" variant="simple">
@@ -111,9 +103,7 @@ watch(visible, (visibility: boolean) => {
             </div>
             <div class="grid gap-2">
                 <FloatLabel variant="on">
-                    <Textarea fluid id="description"
-                              v-model="form.description" rows="3" cols="30"
-                              style="resize: none" />
+                    <Textarea fluid id="description" v-model="form.description" rows="3" cols="30" style="resize: none" />
                     <label for="description" class="text-sm">Description</label>
                 </FloatLabel>
                 <Message v-if="form.errors.description" severity="error" size="small" variant="simple">
