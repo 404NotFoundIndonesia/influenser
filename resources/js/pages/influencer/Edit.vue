@@ -3,7 +3,7 @@ import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import {
-    Toolbar, Image, Textarea, Dialog, Button, Fieldset,
+    Toolbar, Image, Textarea, Dialog, Button, Fieldset, Select,
     useConfirm, ConfirmPopup, FloatLabel, InputText, InputNumber,
     FileUpload, Message, InputGroup, InputGroupAddon, MultiSelect,
 } from 'primevue';
@@ -89,6 +89,50 @@ const form = useForm<InfluencerForm>({
 const newKOLDialog = ref<boolean>(false);
 const editPhoto = ref<boolean>(false);
 const confirm = useConfirm();
+
+// ── CreatorDB import ──────────────────────────────────────────────────────────
+const importDialog   = ref(false);
+const importPlatform = ref<Platform | null>(null);
+const importUsername = ref('');
+const importLoading  = ref(false);
+const importError    = ref<string | null>(null);
+const importResult   = ref<Record<string, any> | null>(null);
+
+const creatorDbPlatforms = [
+    { label: 'TikTok',    value: Platform.TikTok },
+    { label: 'Instagram', value: Platform.Instagram },
+    { label: 'YouTube',   value: Platform.Youtube },
+    { label: 'Facebook',  value: Platform.Facebook },
+];
+
+const searchCreatorDB = async () => {
+    if (!importPlatform.value || !importUsername.value.trim()) return;
+    importLoading.value = true;
+    importError.value   = null;
+    importResult.value  = null;
+    try {
+        const url = route('creator-db.search') + '?' + new URLSearchParams({
+            platform: importPlatform.value,
+            username: importUsername.value.trim(),
+        }).toString();
+        const res = await fetch(url, { headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' } });
+        if (!res.ok) { importError.value = 'Search failed. Please try again.'; return; }
+        importResult.value = await res.json();
+    } catch { importError.value = 'Network error.'; }
+    finally   { importLoading.value = false; }
+};
+
+const addFromCreatorDB = () => {
+    if (!importResult.value || !importPlatform.value) return;
+    router.post(route('influencer.kol.import', props.item.id), {
+        platform: importPlatform.value,
+        username: importResult.value.username ?? importUsername.value,
+    }, { preserveScroll: true });
+    importDialog.value   = false;
+    importPlatform.value = null;
+    importUsername.value = '';
+    importResult.value   = null;
+};
 
 const addKOL = (platform: Platform) => {
     form.keyOpinionLeaders.push(<KeyOpinionLeaderForm>{
@@ -262,9 +306,14 @@ const submit = () => {
                     </div>
                     <div class="flex justify-between items-center">
                         <h1 class="font-semibold">Platform</h1>
-                        <Button
-                            label="New Platform" size="small" @click="() => newKOLDialog = true"
-                            severity="secondary" variant="outlined" />
+                        <div class="flex gap-2">
+                            <Button
+                                label="Import from CreatorDB" size="small" icon="pi pi-cloud-download"
+                                severity="secondary" variant="outlined" @click="() => importDialog = true" />
+                            <Button
+                                label="New Platform" size="small" @click="() => newKOLDialog = true"
+                                severity="secondary" variant="outlined" />
+                        </div>
                     </div>
                     <div class="flex flex-col gap-y-5">
                         <Fieldset v-for="(keyOpinionLeader, index) in form.keyOpinionLeaders" :key="index">
@@ -494,6 +543,46 @@ const submit = () => {
                 </div>
             </div>
         </div>
+
+        <!-- CreatorDB import dialog -->
+        <Dialog v-model:visible="importDialog" modal header="Import from CreatorDB" :style="{ width: '38rem' }">
+            <div class="flex flex-col gap-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm font-medium">Platform</label>
+                        <Select v-model="importPlatform" :options="creatorDbPlatforms"
+                                option-label="label" option-value="value"
+                                placeholder="Select platform" fluid />
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm font-medium">Username</label>
+                        <InputText v-model="importUsername" placeholder="e.g. johndoe" fluid
+                                   @keydown.enter="searchCreatorDB" />
+                    </div>
+                </div>
+                <Button label="Search" icon="pi pi-search" :loading="importLoading"
+                        :disabled="!importPlatform || !importUsername.trim()"
+                        @click="searchCreatorDB" />
+                <Message v-if="importError" severity="error" size="small" variant="simple">{{ importError }}</Message>
+                <div v-if="importResult" class="rounded-lg border border-surface p-4 flex flex-col gap-2">
+                    <div class="flex items-center gap-2">
+                        <i :class="`pi pi-${importResult.platform}`" style="font-size:1.25rem"></i>
+                        <a :href="importResult.link" target="_blank" class="font-semibold hover:underline">
+                            @{{ importResult.username }}
+                        </a>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <div><span class="text-muted-foreground">Followers:</span> {{ importResult.followers?.toLocaleString('id-ID') }}</div>
+                        <div><span class="text-muted-foreground">Following:</span> {{ importResult.following?.toLocaleString('id-ID') }}</div>
+                        <div><span class="text-muted-foreground">Engagement:</span> {{ importResult.engagement_rate }}%</div>
+                        <div><span class="text-muted-foreground">Avg Views:</span> {{ importResult.avg_views?.toLocaleString('id-ID') }}</div>
+                    </div>
+                    <Button label="Add this KOL" icon="pi pi-plus" size="small" class="mt-1"
+                            :disabled="form.keyOpinionLeaders.some((k) => k.platform === importPlatform)"
+                            @click="addFromCreatorDB" />
+                </div>
+            </div>
+        </Dialog>
 
         <Dialog v-model:visible="newKOLDialog" modal header="Choose platform" :style="{ width: '50rem' }">
             <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">

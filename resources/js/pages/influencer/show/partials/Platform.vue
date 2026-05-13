@@ -13,6 +13,13 @@ interface Props {
 
 const props = defineProps<Props>();
 const confirm = useConfirm();
+
+const syncViaCreatorDB = (item: KeyOpinionLeader) => {
+    router.post(route('influencer.kol.sync.creator-db', {
+        influencer: props.influencer.id,
+        keyOpinionLeader: item.id,
+    }), {}, { preserveScroll: true });
+};
 const destroy = (event: MouseEvent, item: KeyOpinionLeader) => {
     confirm.require({
         target: event.currentTarget as HTMLElement,
@@ -66,10 +73,17 @@ const destroy = (event: MouseEvent, item: KeyOpinionLeader) => {
                     </div>
                 </template>
                 <template #icons>
-                    <Button icon="pi pi-trash" size="small"
-                            variant="outlined"
-                            @click="destroy($event, keyOpinionLeader)"
-                            severity="danger" rounded></Button>
+                    <div class="flex items-center gap-1">
+                        <Button
+                            icon="pi pi-sync" size="small" variant="outlined" rounded
+                            :loading="keyOpinionLeader.is_syncing"
+                            v-tooltip.bottom="'Sync via CreatorDB'"
+                            @click="syncViaCreatorDB(keyOpinionLeader)" />
+                        <Button icon="pi pi-trash" size="small"
+                                variant="outlined"
+                                @click="destroy($event, keyOpinionLeader)"
+                                severity="danger" rounded></Button>
+                    </div>
                 </template>
 
                 <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-2">

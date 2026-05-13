@@ -213,7 +213,7 @@ Tracks all remaining implementation work derived from [PRD.md](PRD.md).
 ## Section 6 — CreatorDB Integration UI
 > Completes F9. Service layer (`CreatorDBServiceV1`) is already implemented. Independent of Sections 1–5.
 
-- [ ] **T6.1 — Backend: CreatorDB search endpoint**
+- [x] **T6.1 — Backend: CreatorDB search endpoint**
   - `App\Http\Controllers\Web\CreatorDB\CreatorDBController::search(Request $request)`
   - Validates `platform` (must be in Platform enum) and `username` (required string).
   - Calls the appropriate `CreatorDBServiceInterface` method based on platform, returns normalized JSON.
@@ -226,7 +226,7 @@ Tracks all remaining implementation work derived from [PRD.md](PRD.md).
     - GET with invalid `platform` → assert 422.
     - Mock service throwing exception → assert 502.
 
-- [ ] **T6.2 — Backend: import KOL from CreatorDB**
+- [x] **T6.2 — Backend: import KOL from CreatorDB**
   - `CreatorDBController::import(Request $request, Influencer $influencer)`
   - Accepts `{ platform, username }`, fetches from CreatorDB, maps response to `key_opinion_leaders` columns, creates KOL record, sets `synced_at = now()`.
   - Route: `POST /influencer/{influencer}/kol/import`.
@@ -235,7 +235,7 @@ Tracks all remaining implementation work derived from [PRD.md](PRD.md).
     - Mock service returning fixture data. POST → assert KOL record created in DB with correct `followers`, `platform`, `synced_at` not null.
     - Mock service throwing exception → assert no KOL created, error response returned.
 
-- [ ] **T6.3 — Backend: manual sync job for existing KOL**
+- [x] **T6.3 — Backend: manual sync job for existing KOL**
   - `App\Jobs\SyncKolFromCreatorDB` — sets `syncing_at = now()` on the KOL, calls CreatorDB for fresh metrics, updates all metric columns, sets `synced_at = now()`, clears `syncing_at`.
   - On any exception: clears `syncing_at`, logs the error.
   - Route: `POST /influencer/{influencer}/kol/{kol}/sync/creator-db` → dispatches job, returns immediately.
@@ -245,7 +245,7 @@ Tracks all remaining implementation work derived from [PRD.md](PRD.md).
     - Mock service throwing exception → assert `syncing_at` is null after handle (error path clears it), error logged.
   - **Test (HTTP)**: `tests/Feature/CreatorDB/CreatorDBControllerTest.php` — POST to sync route → assert `Queue::assertPushed(SyncKolFromCreatorDB::class)`.
 
-- [ ] **T6.4 — Frontend: import modal on Influencer Create/Edit**
+- [x] **T6.4 — Frontend: import modal on Influencer Create/Edit**
   - "Import from CreatorDB" button on the KOL section of `influencer/Create.vue` and `influencer/Edit.vue`.
   - Opens a modal: platform dropdown + username text input + "Search" button.
   - Search calls T6.1 endpoint and displays a preview card (followers, engagement rate, link).
@@ -253,7 +253,7 @@ Tracks all remaining implementation work derived from [PRD.md](PRD.md).
   - **DoD**: User can find and import a KOL without manually typing all metrics. Loading and error states handled.
   - **Test**: No backend test. Covered by T6.1 and T6.2 feature tests.
 
-- [ ] **T6.5 — Frontend: sync button on Influencer Show**
+- [x] **T6.5 — Frontend: sync button on Influencer Show**
   - Per-KOL row on `influencer/Show.vue`: "Sync" dropdown with option "Sync via CreatorDB".
   - Button disabled (with spinner) while `syncing_at` is not null (prop passed from controller).
   - On click: calls T6.3 endpoint; page reloads after a short delay to show updated metrics.

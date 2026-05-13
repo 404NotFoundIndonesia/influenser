@@ -27,6 +27,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::delete('/influencer/{influencer}/kol/{keyOpinionLeader}', [\App\Http\Controllers\Web\Influencer\KeyOpinionLeaderController::class, 'destroy'])->name('influencer.key-opinion-leader.destroy');
 
+    Route::get('/creator-db/search', [\App\Http\Controllers\Web\CreatorDB\CreatorDBController::class, 'search'])->name('creator-db.search');
+    Route::post('/influencer/{influencer}/kol/import', [\App\Http\Controllers\Web\CreatorDB\CreatorDBController::class, 'import'])->name('influencer.kol.import');
+    Route::post('/influencer/{influencer}/kol/{keyOpinionLeader}/sync/creator-db', [\App\Http\Controllers\Web\CreatorDB\CreatorDBController::class, 'sync'])->name('influencer.kol.sync.creator-db');
+
     Route::get('/campaign', [\App\Http\Controllers\Web\Campaign\CampaignController::class, 'index'])->name('campaign.index');
     Route::post('/campaign', [\App\Http\Controllers\Web\Campaign\CampaignController::class, 'store'])->name('campaign.store');
     Route::get('/campaign/{campaign}', [\App\Http\Controllers\Web\Campaign\CampaignController::class, 'show'])->name('campaign.show');
