@@ -9,6 +9,7 @@ use App\Traits\Models\Paginate;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Campaign extends Model
 {
@@ -50,5 +51,12 @@ class Campaign extends Model
     {
         parent::__construct($attributes);
         $this->picturePathColumn = 'banner_path';
+    }
+
+    public function keyOpinionLeaders(): BelongsToMany
+    {
+        return $this->belongsToMany(KeyOpinionLeader::class)
+            ->withPivot(['deliverable', 'posted_at', 'actual_views', 'actual_likes', 'actual_comments', 'actual_shares'])
+            ->withTimestamps();
     }
 }

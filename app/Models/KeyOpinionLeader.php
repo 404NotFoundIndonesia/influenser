@@ -6,11 +6,14 @@ use App\Enum\Platform;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class KeyOpinionLeader extends Model
 {
+    use HasFactory;
     use HasUuids;
 
     protected $fillable = [
@@ -47,5 +50,12 @@ class KeyOpinionLeader extends Model
     public function influencer(): BelongsTo
     {
         return $this->belongsTo(Influencer::class);
+    }
+
+    public function campaigns(): BelongsToMany
+    {
+        return $this->belongsToMany(Campaign::class)
+            ->withPivot(['deliverable', 'posted_at', 'actual_views', 'actual_likes', 'actual_comments', 'actual_shares'])
+            ->withTimestamps();
     }
 }

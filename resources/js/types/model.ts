@@ -21,7 +21,6 @@ export interface Paginate<T> {
     total: number;
 }
 
-
 export enum InfluencerStatus {
     Active = "active",
     Inactive = "inactive",
@@ -50,13 +49,30 @@ export enum CampaignStatus {
     Cancelled = 'cancelled',
 }
 
+export interface Niche {
+    id: string;
+    name: string;
+    slug: string;
+    description: string | null;
+    icon: string;
+    active: boolean;
+    created_at: Date;
+    updated_at: Date;
+}
+
+// No reference to Influencer here — avoids circular dependency.
+// Use CampaignKeyOpinionLeader when influencer data is needed.
 export interface KeyOpinionLeader {
     id: string;
+    username: string;
     platform: Platform;
+    platform_name: string;
     link: string;
+    bio: string | null;
     engagement_rate: number;
     followers: number;
     following: number;
+    total_content: number;
     views: number;
     likes: number;
     shares: number;
@@ -66,6 +82,9 @@ export interface KeyOpinionLeader {
     avg_shares: number;
     avg_comments: number;
     endorsement_rate: number;
+    is_syncing: boolean;
+    synced_at: string | null;
+    syncing_at: string | null;
     created_at: Date;
     updated_at: Date;
 }
@@ -81,21 +100,24 @@ export interface Influencer {
     status: InfluencerStatus;
     profile_picture_path: string|null;
     picture_url: string|null;
-    key_opinion_leaders?: KeyOpinionLeader[] | any[];
-    niches?: Niche[],
+    key_opinion_leaders?: KeyOpinionLeader[];
+    niches?: Niche[];
     created_at: Date;
     updated_at: Date;
 }
 
-export interface Niche {
-    id: string;
-    name: string;
-    slug: string;
-    description: string | null;
-    icon: string;
-    active: boolean;
-    created_at: Date;
-    updated_at: Date;
+export interface CampaignKolPivot {
+    deliverable: string | null;
+    posted_at: string | null;
+    actual_views: number | null;
+    actual_likes: number | null;
+    actual_comments: number | null;
+    actual_shares: number | null;
+}
+
+export interface CampaignKeyOpinionLeader extends KeyOpinionLeader {
+    pivot: CampaignKolPivot;
+    influencer?: Influencer;
 }
 
 export interface Campaign {
@@ -107,6 +129,7 @@ export interface Campaign {
     status: CampaignStatus;
     banner_path: string | null;
     picture_url: string;
+    key_opinion_leaders?: CampaignKeyOpinionLeader[];
     created_at: Date;
     updated_at: Date;
 }

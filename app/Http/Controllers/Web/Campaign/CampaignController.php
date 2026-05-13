@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Campaign\StoreCampaignRequest;
 use App\Http\Requests\Campaign\UpdateCampaignRequest;
 use App\Models\Campaign;
+use App\Models\Influencer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -26,8 +27,14 @@ class CampaignController extends Controller
 
     public function show(Campaign $campaign): Response
     {
+        $campaign->load(['keyOpinionLeaders.influencer']);
+
         return Inertia::render('campaign/Show', [
             'item' => $campaign,
+            'influencers' => Influencer::query()
+                ->with(['key_opinion_leaders'])
+                ->orderBy('name')
+                ->get(['id', 'name']),
         ]);
     }
 

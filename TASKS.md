@@ -13,24 +13,24 @@ Tracks all remaining implementation work derived from [PRD.md](PRD.md).
 ## Section 1 — Campaign–KOL Linking
 > Completes F4. Prerequisite for Sections 2, 4, and 5.
 
-- [ ] **T1.1 — Migration: `campaign_key_opinion_leader` pivot table**
+- [x] **T1.1 — Migration: `campaign_key_opinion_leader` pivot table**
   - Create migration with columns: `campaign_id` (uuid FK → campaigns), `key_opinion_leader_id` (uuid FK → key_opinion_leaders), `deliverable` (string, nullable), `posted_at` (timestamp, nullable), `actual_views`, `actual_likes`, `actual_comments`, `actual_shares` (unsignedBigInteger, nullable each).
   - **DoD**: `php artisan migrate` and `php artisan migrate:rollback` both run cleanly. Table appears in DB with correct FK constraints.
   - **Test**: Covered implicitly by T1.2 and T1.4 feature tests which run against in-memory SQLite.
 
-- [ ] **T1.2 — Model: `Campaign::keyOpinionLeaders()` relationship**
+- [x] **T1.2 — Model: `Campaign::keyOpinionLeaders()` relationship**
   - Add `belongsToMany(KeyOpinionLeader::class)` on `Campaign` model through the pivot. Expose pivot extras (`deliverable`, `posted_at`, `actual_*`) via `withPivot()`.
   - **DoD**: `Campaign::with('keyOpinionLeaders')->first()->keyOpinionLeaders` returns a collection; `->pivot->deliverable` is accessible.
   - **Test**: `tests/Feature/Campaign/CampaignKolRelationshipTest.php`
     - Assert `keyOpinionLeaders()` returns a `BelongsToMany` instance.
     - Create a campaign + KOL, attach them with a deliverable, assert `$campaign->keyOpinionLeaders->first()->pivot->deliverable` equals the value set.
 
-- [ ] **T1.3 — Model: `KeyOpinionLeader::campaigns()` reverse relationship**
+- [x] **T1.3 — Model: `KeyOpinionLeader::campaigns()` reverse relationship**
   - Add `belongsToMany(Campaign::class)` on `KeyOpinionLeader` with same pivot extras.
   - **DoD**: `KeyOpinionLeader::with('campaigns')->first()->campaigns` returns a collection.
   - **Test**: Same file as T1.2 — assert reverse: attach KOL to campaign, then load `$kol->campaigns` and confirm campaign is present.
 
-- [ ] **T1.4 — Backend: attach/detach KOL endpoints**
+- [x] **T1.4 — Backend: attach/detach KOL endpoints**
   - Create `App\Http\Controllers\Web\Campaign\CampaignKolController` with:
     - `store(Request $request, Campaign $campaign)` — validates `key_opinion_leader_id` + optional `deliverable`, attaches via `syncWithoutDetaching`, returns redirect back.
     - `destroy(Campaign $campaign, KeyOpinionLeader $kol)` — detaches from pivot.
@@ -43,7 +43,7 @@ Tracks all remaining implementation work derived from [PRD.md](PRD.md).
     - `destroy` → assert pivot row removed; KOL record itself untouched.
     - All requests as authenticated user; assert 302 redirect for unauthenticated.
 
-- [ ] **T1.5 — Frontend: KOL panel on Campaign Show page**
+- [x] **T1.5 — Frontend: KOL panel on Campaign Show page**
   - Add a "KOLs" section to `resources/js/pages/campaign/Show.vue`.
   - Displays a table of attached KOLs: influencer name, platform badge, username, deliverable, posted date, action to detach.
   - Includes a search-and-attach form: select an influencer → select one of their KOL accounts → enter deliverable → submit.
