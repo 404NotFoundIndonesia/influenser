@@ -10,10 +10,10 @@ use Illuminate\Support\Facades\Log;
 test('handle updates kol metrics synced_at and clears syncing_at on success', function () {
     $influencer = Influencer::factory()->create();
     $kol = KeyOpinionLeader::factory()->create([
-        'influencer_id'  => $influencer->id,
-        'platform'       => Platform::TikTok->value,
-        'username'       => 'testuser',
-        'followers'      => 1_000,
+        'influencer_id' => $influencer->id,
+        'platform' => Platform::TikTok->value,
+        'username' => 'testuser',
+        'followers' => 1_000,
         'engagement_rate' => 1.0,
     ]);
 
@@ -21,9 +21,9 @@ test('handle updates kol metrics synced_at and clears syncing_at on success', fu
     $mock->shouldReceive('tiktokBasic')
         ->with('testuser')
         ->andReturn([
-            'followers'  => 250_000,
+            'followers' => 250_000,
             'engageRate' => 5.5,
-            'avgPlays'   => 80_000,
+            'avgPlays' => 80_000,
         ]);
 
     (new SyncKolFromCreatorDB($kol))->handle($mock);
@@ -40,8 +40,8 @@ test('handle clears syncing_at and logs error when service throws', function () 
     $influencer = Influencer::factory()->create();
     $kol = KeyOpinionLeader::factory()->create([
         'influencer_id' => $influencer->id,
-        'platform'      => Platform::TikTok->value,
-        'username'      => 'testuser',
+        'platform' => Platform::TikTok->value,
+        'username' => 'testuser',
     ]);
 
     $mock = Mockery::mock(CreatorDBServiceInterface::class);
@@ -59,16 +59,16 @@ test('handle updates instagram kol metrics correctly', function () {
     $influencer = Influencer::factory()->create();
     $kol = KeyOpinionLeader::factory()->create([
         'influencer_id' => $influencer->id,
-        'platform'      => Platform::Instagram->value,
-        'username'      => 'instauser',
-        'followers'     => 500,
+        'platform' => Platform::Instagram->value,
+        'username' => 'instauser',
+        'followers' => 500,
     ]);
 
     $mock = Mockery::mock(CreatorDBServiceInterface::class);
     $mock->shouldReceive('instagramBasic')
         ->with('instauser')
         ->andReturn([
-            'followers'  => 120_000,
+            'followers' => 120_000,
             'engageRate' => 2.8,
         ]);
 
@@ -84,17 +84,17 @@ test('handle updates youtube kol mapping subscribers to followers', function () 
     $influencer = Influencer::factory()->create();
     $kol = KeyOpinionLeader::factory()->create([
         'influencer_id' => $influencer->id,
-        'platform'      => Platform::Youtube->value,
-        'username'      => 'ytuser',
-        'followers'     => 100,
+        'platform' => Platform::Youtube->value,
+        'username' => 'ytuser',
+        'followers' => 100,
     ]);
 
     $mock = Mockery::mock(CreatorDBServiceInterface::class);
     $mock->shouldReceive('youtubeBasic')
         ->with('ytuser')
         ->andReturn([
-            'subscribers'    => 500_000,
-            'engageRate1Y'   => 3.0,
+            'subscribers' => 500_000,
+            'engageRate1Y' => 3.0,
         ]);
 
     (new SyncKolFromCreatorDB($kol))->handle($mock);

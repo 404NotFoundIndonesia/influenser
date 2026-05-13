@@ -20,9 +20,9 @@ class CampaignStartReminderNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Reminder: Campaign "' . $this->campaign->name . '" starts tomorrow')
+            ->subject('Reminder: Campaign "'.$this->campaign->name.'" starts tomorrow')
             ->markdown('mail.campaign-start-reminder', [
-                'campaign'   => $this->campaign,
+                'campaign' => $this->campaign,
                 'notifiable' => $notifiable,
             ]);
     }

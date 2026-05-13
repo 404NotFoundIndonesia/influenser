@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 trait HasPicture
 {
     protected string $nameColumn = 'name';
+
     protected string $picturePathColumn = 'picture_path';
 
     public function pictureUrl(): Attribute

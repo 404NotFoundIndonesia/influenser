@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Campaign;
-use App\Models\Influencer;
 use App\Models\KeyOpinionLeader;
 
 test('campaign has many key opinion leaders through pivot', function () {
@@ -23,12 +22,12 @@ test('pivot exposes all extra columns', function () {
     $kol = KeyOpinionLeader::factory()->create();
 
     $campaign->keyOpinionLeaders()->attach($kol->id, [
-        'deliverable'    => '1 reel',
-        'posted_at'      => now()->toDateTimeString(),
-        'actual_views'   => 50000,
-        'actual_likes'   => 2000,
+        'deliverable' => '1 reel',
+        'posted_at' => now()->toDateTimeString(),
+        'actual_views' => 50000,
+        'actual_likes' => 2000,
         'actual_comments' => 300,
-        'actual_shares'  => 150,
+        'actual_shares' => 150,
     ]);
 
     $pivot = $campaign->keyOpinionLeaders()->first()->pivot;

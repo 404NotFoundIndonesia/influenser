@@ -20,9 +20,9 @@ class CampaignDeadlineReminderNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Reminder: Campaign "' . $this->campaign->name . '" ends tomorrow')
+            ->subject('Reminder: Campaign "'.$this->campaign->name.'" ends tomorrow')
             ->markdown('mail.campaign-deadline-reminder', [
-                'campaign'   => $this->campaign,
+                'campaign' => $this->campaign,
                 'notifiable' => $notifiable,
             ]);
     }

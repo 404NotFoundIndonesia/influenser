@@ -20,9 +20,9 @@ class PaymentConfirmedNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Payment Confirmed — ' . $this->invoice->campaign->name)
+            ->subject('Payment Confirmed — '.$this->invoice->campaign->name)
             ->markdown('mail.payment-confirmed', [
-                'invoice'    => $this->invoice,
+                'invoice' => $this->invoice,
                 'notifiable' => $notifiable,
             ]);
     }

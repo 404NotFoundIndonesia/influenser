@@ -16,7 +16,7 @@ trait HasSlug
         $count = 1;
 
         while ($this->slugExists($slug)) {
-            $slug = $baseSlug . '-' . $count;
+            $slug = $baseSlug.'-'.$count;
             $count++;
         }
 

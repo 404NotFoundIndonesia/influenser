@@ -19,7 +19,7 @@ class NicheController extends Controller
         return Inertia::render('niche/Index', [
             'items' => Niche::query()
                 ->filter($request->query('filter'))
-                ->render($request->query('size'))
+                ->render($request->query('size')),
         ]);
     }
 

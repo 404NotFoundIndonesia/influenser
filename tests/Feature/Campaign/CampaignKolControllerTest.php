@@ -42,9 +42,9 @@ test('authenticated user can attach a kol to a campaign', function () {
         ->assertRedirect();
 
     $this->assertDatabaseHas('campaign_key_opinion_leader', [
-        'campaign_id'           => $campaign->id,
+        'campaign_id' => $campaign->id,
         'key_opinion_leader_id' => $kol->id,
-        'deliverable'           => '3 Instagram posts',
+        'deliverable' => '3 Instagram posts',
     ]);
 });
 
@@ -102,21 +102,21 @@ test('authenticated user can update engagement metrics on attached kol', functio
 
     $this->actingAs($user)
         ->put(route('campaign.kol.update', [$campaign, $kol]), [
-            'actual_views'    => 5000,
-            'actual_likes'    => 200,
+            'actual_views' => 5000,
+            'actual_likes' => 200,
             'actual_comments' => 50,
-            'actual_shares'   => 30,
-            'posted_at'       => '2026-01-15',
+            'actual_shares' => 30,
+            'posted_at' => '2026-01-15',
         ])
         ->assertRedirect();
 
     $this->assertDatabaseHas('campaign_key_opinion_leader', [
-        'campaign_id'           => $campaign->id,
+        'campaign_id' => $campaign->id,
         'key_opinion_leader_id' => $kol->id,
-        'actual_views'          => 5000,
-        'actual_likes'          => 200,
-        'actual_comments'       => 50,
-        'actual_shares'         => 30,
+        'actual_views' => 5000,
+        'actual_likes' => 200,
+        'actual_comments' => 50,
+        'actual_shares' => 30,
     ]);
 });
 
@@ -133,12 +133,12 @@ test('updating with only posted_at leaves numeric metrics null', function () {
         ->assertRedirect();
 
     $this->assertDatabaseHas('campaign_key_opinion_leader', [
-        'campaign_id'           => $campaign->id,
+        'campaign_id' => $campaign->id,
         'key_opinion_leader_id' => $kol->id,
-        'actual_views'          => null,
-        'actual_likes'          => null,
-        'actual_comments'       => null,
-        'actual_shares'         => null,
+        'actual_views' => null,
+        'actual_likes' => null,
+        'actual_comments' => null,
+        'actual_shares' => null,
     ]);
 });
 
@@ -180,7 +180,7 @@ test('authenticated user can detach a kol from a campaign', function () {
         ->assertRedirect();
 
     $this->assertDatabaseMissing('campaign_key_opinion_leader', [
-        'campaign_id'           => $campaign->id,
+        'campaign_id' => $campaign->id,
         'key_opinion_leader_id' => $kol->id,
     ]);
 });
@@ -221,11 +221,11 @@ test('updated engagement metrics are visible in campaign show props', function (
     $campaign = Campaign::factory()->create();
     $kol = KeyOpinionLeader::factory()->create();
     $campaign->keyOpinionLeaders()->attach($kol->id, [
-        'actual_views'    => 8000,
-        'actual_likes'    => 400,
+        'actual_views' => 8000,
+        'actual_likes' => 400,
         'actual_comments' => 75,
-        'actual_shares'   => 20,
-        'posted_at'       => '2026-03-01',
+        'actual_shares' => 20,
+        'posted_at' => '2026-03-01',
     ]);
 
     $this->actingAs($user)
@@ -246,10 +246,10 @@ test('updated engagement metrics are visible in campaign show props', function (
 test('attaching kol notifies influencer when they have an email', function () {
     Notification::fake();
 
-    $user       = User::factory()->create();
-    $campaign   = Campaign::factory()->create();
+    $user = User::factory()->create();
+    $campaign = Campaign::factory()->create();
     $influencer = Influencer::factory()->create(['email' => 'creator@example.com']);
-    $kol        = KeyOpinionLeader::factory()->create(['influencer_id' => $influencer->id]);
+    $kol = KeyOpinionLeader::factory()->create(['influencer_id' => $influencer->id]);
 
     $this->actingAs($user)
         ->post(route('campaign.kol.store', $campaign), [
@@ -267,10 +267,10 @@ test('attaching kol notifies influencer when they have an email', function () {
 test('attaching kol does not notify when influencer has no email', function () {
     Notification::fake();
 
-    $user       = User::factory()->create();
-    $campaign   = Campaign::factory()->create();
+    $user = User::factory()->create();
+    $campaign = Campaign::factory()->create();
     $influencer = Influencer::factory()->create(['email' => null]);
-    $kol        = KeyOpinionLeader::factory()->create(['influencer_id' => $influencer->id]);
+    $kol = KeyOpinionLeader::factory()->create(['influencer_id' => $influencer->id]);
 
     $this->actingAs($user)
         ->post(route('campaign.kol.store', $campaign), [

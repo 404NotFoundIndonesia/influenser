@@ -14,12 +14,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Campaign extends Model
 {
-    use HasFactory;
-    use Paginate;
     use Filterable;
+    use HasFactory;
     use HasPicture;
     use HasSlug;
     use HasUuids;
+    use Paginate;
 
     protected $fillable = [
         'name', 'description', 'start_date', 'end_date',
@@ -41,9 +41,9 @@ class Campaign extends Model
         static::deleting(function (Campaign $campaign) {
             $campaign->deletePicture();
         });
-        static::creating(fn(self $model) => $model->slug = $model->generateSlug($model->name));
+        static::creating(fn (self $model) => $model->slug = $model->generateSlug($model->name));
         static::updating(
-            fn(self $model) => $model->slug = $model->isDirty('name') ?
+            fn (self $model) => $model->slug = $model->isDirty('name') ?
                 $model->generateSlug($model->name) : $model->slug,
         );
     }

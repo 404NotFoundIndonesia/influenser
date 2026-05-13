@@ -19,8 +19,9 @@ class InfluencerSeeder extends Seeder
         /** @var Influencer $influencer */
         foreach ($influencers as $influencer) {
             foreach ($platforms as $platform) {
-                if (fake()->boolean())
+                if (fake()->boolean()) {
                     continue;
+                }
 
                 $username = fake()->unique()->userName();
 

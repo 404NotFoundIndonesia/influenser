@@ -12,11 +12,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Niche extends Model
 {
+    use Filterable;
     use HasFactory;
+    use HasSlug;
     use HasUuids;
     use Paginate;
-    use Filterable;
-    use HasSlug;
 
     protected $fillable = [
         'name', 'description', 'icon', 'active',
@@ -29,9 +29,9 @@ class Niche extends Model
     protected static function boot(): void
     {
         parent::boot();
-        static::creating(fn(self $model) => $model->slug = $model->generateSlug($model->name));
+        static::creating(fn (self $model) => $model->slug = $model->generateSlug($model->name));
         static::updating(
-            fn(self $model) => $model->slug = $model->isDirty('name') ?
+            fn (self $model) => $model->slug = $model->isDirty('name') ?
                 $model->generateSlug($model->name) : $model->slug,
         );
     }

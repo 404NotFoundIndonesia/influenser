@@ -17,8 +17,8 @@ test('sync returns array with followers key for tiktok', function () use ($fixtu
     $influencer = Influencer::factory()->create();
     $kol = KeyOpinionLeader::factory()->create([
         'influencer_id' => $influencer->id,
-        'platform'      => Platform::TikTok->value,
-        'username'      => 'testuser',
+        'platform' => Platform::TikTok->value,
+        'username' => 'testuser',
     ]);
 
     $result = (new ApifyKolSyncService($mock))->sync($kol);
@@ -36,8 +36,8 @@ test('sync returns array with followers key for instagram', function () {
     $influencer = Influencer::factory()->create();
     $kol = KeyOpinionLeader::factory()->create([
         'influencer_id' => $influencer->id,
-        'platform'      => Platform::Instagram->value,
-        'username'      => 'instauser',
+        'platform' => Platform::Instagram->value,
+        'username' => 'instauser',
     ]);
 
     $result = (new ApifyKolSyncService($mock))->sync($kol);
@@ -55,8 +55,8 @@ test('sync returns array with followers key for youtube', function () {
     $influencer = Influencer::factory()->create();
     $kol = KeyOpinionLeader::factory()->create([
         'influencer_id' => $influencer->id,
-        'platform'      => Platform::Youtube->value,
-        'username'      => 'ytuser',
+        'platform' => Platform::Youtube->value,
+        'username' => 'ytuser',
     ]);
 
     $result = (new ApifyKolSyncService($mock))->sync($kol);
@@ -74,8 +74,8 @@ test('sync returns array with followers key for facebook', function () {
     $influencer = Influencer::factory()->create();
     $kol = KeyOpinionLeader::factory()->create([
         'influencer_id' => $influencer->id,
-        'platform'      => Platform::Facebook->value,
-        'username'      => 'fbuser',
+        'platform' => Platform::Facebook->value,
+        'username' => 'fbuser',
     ]);
 
     $result = (new ApifyKolSyncService($mock))->sync($kol);
@@ -90,8 +90,8 @@ test('sync throws RuntimeException for unsupported platform', function () {
     $influencer = Influencer::factory()->create();
     $kol = KeyOpinionLeader::factory()->create([
         'influencer_id' => $influencer->id,
-        'platform'      => Platform::LinkedIn->value,
-        'username'      => 'linkedinuser',
+        'platform' => Platform::LinkedIn->value,
+        'username' => 'linkedinuser',
     ]);
 
     expect(fn () => (new ApifyKolSyncService($mock))->sync($kol))

@@ -13,11 +13,11 @@ use Illuminate\Support\Facades\Notification;
 test('start reminder job notifies all users for campaigns starting tomorrow', function () {
     Notification::fake();
 
-    $user     = User::factory()->create();
+    $user = User::factory()->create();
     $tomorrow = now()->addDay()->toDateString();
     $campaign = Campaign::factory()->create(['start_date' => $tomorrow]);
 
-    (new CampaignStartReminderJob())->handle();
+    (new CampaignStartReminderJob)->handle();
 
     Notification::assertSentTo($user, CampaignStartReminderNotification::class,
         fn ($n) => $n->campaign->is($campaign),
@@ -30,7 +30,7 @@ test('start reminder job does not notify when no campaigns start tomorrow', func
     User::factory()->create();
     Campaign::factory()->create(['start_date' => now()->addDays(3)->toDateString()]);
 
-    (new CampaignStartReminderJob())->handle();
+    (new CampaignStartReminderJob)->handle();
 
     Notification::assertNothingSent();
 });
@@ -40,7 +40,7 @@ test('start reminder job does not notify when no users exist', function () {
 
     Campaign::factory()->create(['start_date' => now()->addDay()->toDateString()]);
 
-    (new CampaignStartReminderJob())->handle();
+    (new CampaignStartReminderJob)->handle();
 
     Notification::assertNothingSent();
 });
@@ -48,11 +48,11 @@ test('start reminder job does not notify when no users exist', function () {
 test('start reminder job sends one notification per campaign', function () {
     Notification::fake();
 
-    $user      = User::factory()->create();
-    $tomorrow  = now()->addDay()->toDateString();
+    $user = User::factory()->create();
+    $tomorrow = now()->addDay()->toDateString();
     Campaign::factory()->count(2)->create(['start_date' => $tomorrow]);
 
-    (new CampaignStartReminderJob())->handle();
+    (new CampaignStartReminderJob)->handle();
 
     Notification::assertSentToTimes($user, CampaignStartReminderNotification::class, 2);
 });
@@ -62,11 +62,11 @@ test('start reminder job sends one notification per campaign', function () {
 test('deadline reminder job notifies all users for campaigns ending tomorrow', function () {
     Notification::fake();
 
-    $user     = User::factory()->create();
+    $user = User::factory()->create();
     $tomorrow = now()->addDay()->toDateString();
     $campaign = Campaign::factory()->create(['end_date' => $tomorrow]);
 
-    (new CampaignDeadlineReminderJob())->handle();
+    (new CampaignDeadlineReminderJob)->handle();
 
     Notification::assertSentTo($user, CampaignDeadlineReminderNotification::class,
         fn ($n) => $n->campaign->is($campaign),
@@ -79,7 +79,7 @@ test('deadline reminder job does not notify when no campaigns end tomorrow', fun
     User::factory()->create();
     Campaign::factory()->create(['end_date' => now()->addDays(5)->toDateString()]);
 
-    (new CampaignDeadlineReminderJob())->handle();
+    (new CampaignDeadlineReminderJob)->handle();
 
     Notification::assertNothingSent();
 });

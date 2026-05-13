@@ -17,7 +17,7 @@ class ApifyServiceV1 implements ApifyServiceInterface
         $response = Http::withToken($this->token)
             ->post($url, $input);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             throw new \RuntimeException(
                 "Apify actor run failed [{$response->status()}]: {$response->body()}"
             );

@@ -22,7 +22,7 @@ class SyncKolFromApify implements ShouldQueue
             $metrics = $syncService->sync($this->kol);
 
             $this->kol->update(array_merge($metrics, [
-                'synced_at'  => now(),
+                'synced_at' => now(),
                 'syncing_at' => null,
             ]));
         } catch (\Throwable $e) {
@@ -30,7 +30,7 @@ class SyncKolFromApify implements ShouldQueue
 
             Log::error('SyncKolFromApify failed', [
                 'kol_id' => $this->kol->id,
-                'error'  => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
 
             if (config('influenser.creator_db.key')) {

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Http;
 class CreatorDBServiceV1 implements CreatorDBServiceInterface
 {
     private string $baseUrl;
+
     private string $apiKey;
 
     public function __construct(string $baseUrl, string $apiKey)
@@ -18,7 +19,7 @@ class CreatorDBServiceV1 implements CreatorDBServiceInterface
 
     private function url(string $endpoint): string
     {
-        return sprintf("%s/%s", $this->baseUrl, $endpoint);
+        return sprintf('%s/%s', $this->baseUrl, $endpoint);
     }
 
     private function headers(): array

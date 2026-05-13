@@ -16,20 +16,20 @@ class InvoiceFactory extends Factory
     public function definition(): array
     {
         return [
-            'campaign_id'           => Campaign::factory(),
-            'influencer_id'         => Influencer::factory(),
+            'campaign_id' => Campaign::factory(),
+            'influencer_id' => Influencer::factory(),
             'key_opinion_leader_id' => null,
-            'amount'                => $this->faker->numberBetween(500_000, 10_000_000),
-            'status'                => InvoiceStatus::Unpaid,
-            'paid_at'               => null,
-            'notes'                 => $this->faker->optional()->sentence(),
+            'amount' => $this->faker->numberBetween(500_000, 10_000_000),
+            'status' => InvoiceStatus::Unpaid,
+            'paid_at' => null,
+            'notes' => $this->faker->optional()->sentence(),
         ];
     }
 
     public function paid(): static
     {
         return $this->state(fn () => [
-            'status'  => InvoiceStatus::Paid,
+            'status' => InvoiceStatus::Paid,
             'paid_at' => now(),
         ]);
     }

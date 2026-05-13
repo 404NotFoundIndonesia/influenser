@@ -13,11 +13,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Invoice extends Model
 {
-    use HasFactory;
-    use HasUuids;
     use Filterable;
-    use Paginate;
+    use HasFactory;
     use HasPicture;
+    use HasUuids;
+    use Paginate;
 
     protected $fillable = [
         'campaign_id', 'influencer_id', 'key_opinion_leader_id',
@@ -25,9 +25,9 @@ class Invoice extends Model
     ];
 
     protected $casts = [
-        'amount'  => 'decimal:2',
+        'amount' => 'decimal:2',
         'paid_at' => 'datetime',
-        'status'  => InvoiceStatus::class,
+        'status' => InvoiceStatus::class,
     ];
 
     protected $appends = ['picture_url'];

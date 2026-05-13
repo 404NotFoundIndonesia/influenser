@@ -41,25 +41,25 @@ class CampaignKolController extends Controller
 
     public function update(Request $request, Campaign $campaign, KeyOpinionLeader $keyOpinionLeader): RedirectResponse
     {
-        if (!$campaign->keyOpinionLeaders()->where('key_opinion_leaders.id', $keyOpinionLeader->id)->exists()) {
+        if (! $campaign->keyOpinionLeaders()->where('key_opinion_leaders.id', $keyOpinionLeader->id)->exists()) {
             abort(404);
         }
 
         $request->validate([
-            'actual_views'    => ['nullable', 'integer', 'min:0'],
-            'actual_likes'    => ['nullable', 'integer', 'min:0'],
+            'actual_views' => ['nullable', 'integer', 'min:0'],
+            'actual_likes' => ['nullable', 'integer', 'min:0'],
             'actual_comments' => ['nullable', 'integer', 'min:0'],
-            'actual_shares'   => ['nullable', 'integer', 'min:0'],
-            'posted_at'       => ['nullable', 'date'],
+            'actual_shares' => ['nullable', 'integer', 'min:0'],
+            'posted_at' => ['nullable', 'date'],
         ]);
 
         try {
             $campaign->keyOpinionLeaders()->updateExistingPivot($keyOpinionLeader->id, [
-                'actual_views'    => $request->actual_views,
-                'actual_likes'    => $request->actual_likes,
+                'actual_views' => $request->actual_views,
+                'actual_likes' => $request->actual_likes,
                 'actual_comments' => $request->actual_comments,
-                'actual_shares'   => $request->actual_shares,
-                'posted_at'       => $request->posted_at,
+                'actual_shares' => $request->actual_shares,
+                'posted_at' => $request->posted_at,
             ]);
 
             return back()->with('success', 'Engagement metrics updated.');

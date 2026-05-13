@@ -7,11 +7,11 @@ use App\Models\User;
 // ── T6.5 — influencer.show includes syncing_at on each KOL ───────────────────
 
 test('influencer show includes syncing_at on each kol', function () {
-    $user       = User::factory()->create();
+    $user = User::factory()->create();
     $influencer = Influencer::factory()->create();
     KeyOpinionLeader::factory()->create([
         'influencer_id' => $influencer->id,
-        'syncing_at'    => null,
+        'syncing_at' => null,
     ]);
 
     $this->actingAs($user)
@@ -26,11 +26,11 @@ test('influencer show includes syncing_at on each kol', function () {
 });
 
 test('influencer show kol syncing_at reflects current value', function () {
-    $user       = User::factory()->create();
+    $user = User::factory()->create();
     $influencer = Influencer::factory()->create();
     KeyOpinionLeader::factory()->create([
         'influencer_id' => $influencer->id,
-        'syncing_at'    => now(),
+        'syncing_at' => now(),
     ]);
 
     $this->actingAs($user)

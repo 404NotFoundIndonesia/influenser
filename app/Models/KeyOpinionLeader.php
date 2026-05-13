@@ -35,8 +35,9 @@ class KeyOpinionLeader extends Model
     public function isSyncing(): Attribute
     {
         return Attribute::get(function () {
-            if (!$this->syncing_at)
+            if (! $this->syncing_at) {
                 return false;
+            }
 
             return now() < Carbon::parse($this->syncing_at)->addDay();
         });

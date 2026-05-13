@@ -11,25 +11,25 @@ use Illuminate\Support\Facades\Queue;
 test('handle updates kol metrics synced_at and clears syncing_at on success', function () {
     $influencer = Influencer::factory()->create();
     $kol = KeyOpinionLeader::factory()->create([
-        'influencer_id'  => $influencer->id,
-        'platform'       => Platform::TikTok->value,
-        'username'       => 'testuser',
-        'followers'      => 1_000,
+        'influencer_id' => $influencer->id,
+        'platform' => Platform::TikTok->value,
+        'username' => 'testuser',
+        'followers' => 1_000,
         'engagement_rate' => 1.0,
     ]);
 
     $mock = Mockery::mock(ApifyKolSyncService::class);
     $mock->shouldReceive('sync')->with($kol)->andReturn([
-        'followers'       => 750_000,
+        'followers' => 750_000,
         'engagement_rate' => 5.8,
-        'following'       => 300,
-        'total_content'   => 150,
-        'likes'           => 0,
-        'views'           => 0,
-        'avg_views'       => 0,
-        'avg_likes'       => 0,
-        'avg_shares'      => 0,
-        'avg_comments'    => 0,
+        'following' => 300,
+        'total_content' => 150,
+        'likes' => 0,
+        'views' => 0,
+        'avg_views' => 0,
+        'avg_likes' => 0,
+        'avg_shares' => 0,
+        'avg_comments' => 0,
     ]);
 
     (new SyncKolFromApify($kol))->handle($mock);
@@ -47,7 +47,7 @@ test('handle clears syncing_at and dispatches SyncKolFromCreatorDB fallback when
     $influencer = Influencer::factory()->create();
     $kol = KeyOpinionLeader::factory()->create([
         'influencer_id' => $influencer->id,
-        'platform'      => Platform::TikTok->value,
+        'platform' => Platform::TikTok->value,
     ]);
 
     $mock = Mockery::mock(ApifyKolSyncService::class);
@@ -67,7 +67,7 @@ test('handle clears syncing_at and does not dispatch fallback when CREATOR_DB_AP
     $influencer = Influencer::factory()->create();
     $kol = KeyOpinionLeader::factory()->create([
         'influencer_id' => $influencer->id,
-        'platform'      => Platform::TikTok->value,
+        'platform' => Platform::TikTok->value,
     ]);
 
     $mock = Mockery::mock(ApifyKolSyncService::class);

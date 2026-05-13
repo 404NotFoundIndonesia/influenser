@@ -10,7 +10,7 @@ use App\Models\KeyOpinionLeader;
 
 test('invoice belongs to campaign', function () {
     $campaign = Campaign::factory()->create();
-    $invoice  = Invoice::factory()->create(['campaign_id' => $campaign->id]);
+    $invoice = Invoice::factory()->create(['campaign_id' => $campaign->id]);
 
     expect($invoice->campaign)->toBeInstanceOf(Campaign::class)
         ->and($invoice->campaign->id)->toBe($campaign->id);
@@ -18,7 +18,7 @@ test('invoice belongs to campaign', function () {
 
 test('invoice belongs to influencer', function () {
     $influencer = Influencer::factory()->create();
-    $invoice    = Invoice::factory()->create(['influencer_id' => $influencer->id]);
+    $invoice = Invoice::factory()->create(['influencer_id' => $influencer->id]);
 
     expect($invoice->influencer)->toBeInstanceOf(Influencer::class)
         ->and($invoice->influencer->id)->toBe($influencer->id);
@@ -26,9 +26,9 @@ test('invoice belongs to influencer', function () {
 
 test('invoice belongs to key opinion leader', function () {
     $influencer = Influencer::factory()->create();
-    $kol        = KeyOpinionLeader::factory()->create(['influencer_id' => $influencer->id]);
-    $invoice    = Invoice::factory()->create([
-        'influencer_id'         => $influencer->id,
+    $kol = KeyOpinionLeader::factory()->create(['influencer_id' => $influencer->id]);
+    $invoice = Invoice::factory()->create([
+        'influencer_id' => $influencer->id,
         'key_opinion_leader_id' => $kol->id,
     ]);
 

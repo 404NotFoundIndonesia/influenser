@@ -45,21 +45,21 @@ test('dashboard returns correct totalCampaigns and activeCampaigns props', funct
 });
 
 test('dashboard returns correct totalInvoiced and totalPaid props', function () {
-    $user     = User::factory()->create();
+    $user = User::factory()->create();
     $campaign = Campaign::factory()->create();
     $influencer = Influencer::factory()->create();
 
     Invoice::factory()->create([
-        'campaign_id'   => $campaign->id,
+        'campaign_id' => $campaign->id,
         'influencer_id' => $influencer->id,
-        'amount'        => 100_000,
-        'status'        => InvoiceStatus::Paid,
+        'amount' => 100_000,
+        'status' => InvoiceStatus::Paid,
     ]);
     Invoice::factory()->create([
-        'campaign_id'   => $campaign->id,
+        'campaign_id' => $campaign->id,
         'influencer_id' => $influencer->id,
-        'amount'        => 50_000,
-        'status'        => InvoiceStatus::Unpaid,
+        'amount' => 50_000,
+        'status' => InvoiceStatus::Unpaid,
     ]);
 
     $this->actingAs($user)
@@ -77,7 +77,7 @@ test('dashboard topInfluencers contains at most 5 entries sorted by engagement r
     for ($i = 1; $i <= 6; $i++) {
         $influencer = Influencer::factory()->create();
         KeyOpinionLeader::factory()->create([
-            'influencer_id'  => $influencer->id,
+            'influencer_id' => $influencer->id,
             'engagement_rate' => $i * 10,
         ]);
     }

@@ -9,7 +9,7 @@ test('runActor returns parsed array on 200 response and uses bearer token', func
     ]);
 
     $service = new ApifyServiceV1('test-token');
-    $result  = $service->runActor('actor~tiktok-scraper', ['profiles' => ['testuser']]);
+    $result = $service->runActor('actor~tiktok-scraper', ['profiles' => ['testuser']]);
 
     expect($result)->toBeArray()
         ->and($result[0]['followers'])->toBe(100_000);

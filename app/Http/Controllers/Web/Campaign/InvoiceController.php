@@ -27,25 +27,25 @@ class InvoiceController extends Controller
     {
         $request->validate([
             'key_opinion_leader_id' => ['nullable', 'uuid', 'exists:key_opinion_leaders,id'],
-            'influencer_id'         => ['required', 'uuid', 'exists:influencers,id'],
-            'amount'                => ['nullable', 'numeric', 'min:0'],
-            'notes'                 => ['nullable', 'string', 'max:1000'],
+            'influencer_id' => ['required', 'uuid', 'exists:influencers,id'],
+            'amount' => ['nullable', 'numeric', 'min:0'],
+            'notes' => ['nullable', 'string', 'max:1000'],
         ]);
 
         try {
             $amount = $request->amount;
 
             if ($amount === null && $request->key_opinion_leader_id) {
-                $kol    = KeyOpinionLeader::find($request->key_opinion_leader_id);
+                $kol = KeyOpinionLeader::find($request->key_opinion_leader_id);
                 $amount = $kol?->endorsement_rate ?? 0;
             }
 
             $campaign->invoices()->create([
-                'influencer_id'         => $request->influencer_id,
+                'influencer_id' => $request->influencer_id,
                 'key_opinion_leader_id' => $request->key_opinion_leader_id,
-                'amount'                => $amount ?? 0,
-                'notes'                 => $request->notes,
-                'status'                => InvoiceStatus::Unpaid,
+                'amount' => $amount ?? 0,
+                'notes' => $request->notes,
+                'status' => InvoiceStatus::Unpaid,
             ]);
 
             return back()->with('success', 'Invoice created successfully.');
@@ -65,18 +65,18 @@ class InvoiceController extends Controller
         $request->validate([
             'status' => ['nullable', Rule::in(InvoiceStatus::values())],
             'amount' => ['nullable', 'numeric', 'min:0'],
-            'notes'  => ['nullable', 'string', 'max:1000'],
-            'proof'  => ['nullable', 'file', 'mimes:jpeg,png,jpg,pdf', 'max:5120'],
+            'notes' => ['nullable', 'string', 'max:1000'],
+            'proof' => ['nullable', 'file', 'mimes:jpeg,png,jpg,pdf', 'max:5120'],
         ]);
 
         try {
             $data = array_filter([
                 'amount' => $request->amount,
-                'notes'  => $request->notes,
+                'notes' => $request->notes,
             ], fn ($v) => $v !== null);
 
             if ($request->filled('status')) {
-                $newStatus    = InvoiceStatus::from($request->status);
+                $newStatus = InvoiceStatus::from($request->status);
                 $data['status'] = $newStatus;
 
                 if ($newStatus === InvoiceStatus::Paid && $invoice->status !== InvoiceStatus::Paid) {
@@ -143,9 +143,9 @@ class InvoiceController extends Controller
             : null;
 
         $pdf = Pdf::loadView('pdf.invoice', [
-            'invoice'  => $invoice,
+            'invoice' => $invoice,
             'campaign' => $invoice->campaign,
-            'pivot'    => $pivot,
+            'pivot' => $pivot,
         ]);
 
         return $pdf->download("invoice-{$invoice->id}.pdf");

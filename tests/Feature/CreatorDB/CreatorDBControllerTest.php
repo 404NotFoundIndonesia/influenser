@@ -17,10 +17,10 @@ test('search returns 200 with normalized data for valid platform and username', 
     $mock->shouldReceive('tiktokBasic')
         ->with('testuser')
         ->andReturn([
-            'followers'   => 100_000,
-            'following'   => 500,
-            'engageRate'  => 4.5,
-            'avgPlays'    => 50_000,
+            'followers' => 100_000,
+            'following' => 500,
+            'engageRate' => 4.5,
+            'avgPlays' => 50_000,
         ]);
     app()->instance(CreatorDBServiceInterface::class, $mock);
 
@@ -73,17 +73,17 @@ test('guests cannot access search endpoint', function () {
 // ── T6.2 — Import ─────────────────────────────────────────────────────────────
 
 test('import creates kol record with correct platform and synced_at', function () {
-    $user       = User::factory()->create();
+    $user = User::factory()->create();
     $influencer = Influencer::factory()->create();
 
     $mock = Mockery::mock(CreatorDBServiceInterface::class);
     $mock->shouldReceive('instagramBasic')
         ->with('instauser')
         ->andReturn([
-            'followers'  => 50_000,
-            'following'  => 300,
+            'followers' => 50_000,
+            'following' => 300,
             'engageRate' => 3.2,
-            'avgLikes'   => 1500,
+            'avgLikes' => 1500,
         ]);
     app()->instance(CreatorDBServiceInterface::class, $mock);
 
@@ -95,10 +95,10 @@ test('import creates kol record with correct platform and synced_at', function (
         ->assertRedirect();
 
     $this->assertDatabaseHas('key_opinion_leaders', [
-        'influencer_id'  => $influencer->id,
-        'platform'       => Platform::Instagram->value,
-        'username'       => 'instauser',
-        'followers'      => 50_000,
+        'influencer_id' => $influencer->id,
+        'platform' => Platform::Instagram->value,
+        'username' => 'instauser',
+        'followers' => 50_000,
     ]);
 
     $kol = KeyOpinionLeader::where('influencer_id', $influencer->id)->first();
@@ -106,7 +106,7 @@ test('import creates kol record with correct platform and synced_at', function (
 });
 
 test('import does not create kol when service throws exception', function () {
-    $user       = User::factory()->create();
+    $user = User::factory()->create();
     $influencer = Influencer::factory()->create();
 
     $mock = Mockery::mock(CreatorDBServiceInterface::class);
@@ -136,9 +136,9 @@ test('guests cannot import kol', function () {
 test('sync route dispatches SyncKolFromCreatorDB job', function () {
     Queue::fake();
 
-    $user       = User::factory()->create();
+    $user = User::factory()->create();
     $influencer = Influencer::factory()->create();
-    $kol        = KeyOpinionLeader::factory()->create(['influencer_id' => $influencer->id]);
+    $kol = KeyOpinionLeader::factory()->create(['influencer_id' => $influencer->id]);
 
     app()->instance(CreatorDBServiceInterface::class, Mockery::mock(CreatorDBServiceInterface::class));
 
@@ -151,7 +151,7 @@ test('sync route dispatches SyncKolFromCreatorDB job', function () {
 
 test('guests cannot trigger sync', function () {
     $influencer = Influencer::factory()->create();
-    $kol        = KeyOpinionLeader::factory()->create(['influencer_id' => $influencer->id]);
+    $kol = KeyOpinionLeader::factory()->create(['influencer_id' => $influencer->id]);
 
     app()->instance(CreatorDBServiceInterface::class, Mockery::mock(CreatorDBServiceInterface::class));
 

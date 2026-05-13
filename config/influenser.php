@@ -9,10 +9,10 @@ return [
     'apify' => [
         'token' => env('APIFY_TOKEN'),
         'actors' => [
-            'tiktok'    => env('APIFY_ACTOR_TIKTOK'),
+            'tiktok' => env('APIFY_ACTOR_TIKTOK'),
             'instagram' => env('APIFY_ACTOR_INSTAGRAM'),
-            'youtube'   => env('APIFY_ACTOR_YOUTUBE'),
-            'facebook'  => env('APIFY_ACTOR_FACEBOOK'),
+            'youtube' => env('APIFY_ACTOR_YOUTUBE'),
+            'facebook' => env('APIFY_ACTOR_FACEBOOK'),
         ],
     ],
 ];

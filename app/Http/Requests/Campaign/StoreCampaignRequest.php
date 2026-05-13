@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Campaign;
 
 use App\Enum\CampaignStatus;
-use App\Models\Campaign;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;

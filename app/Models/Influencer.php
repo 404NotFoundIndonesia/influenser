@@ -14,12 +14,12 @@ use Illuminate\Notifications\Notifiable;
 
 class Influencer extends Model
 {
-    use HasFactory;
-    use HasUuids;
-    use HasPicture;
-    use Paginate;
     use Filterable;
+    use HasFactory;
+    use HasPicture;
+    use HasUuids;
     use Notifiable;
+    use Paginate;
 
     protected static function boot(): void
     {

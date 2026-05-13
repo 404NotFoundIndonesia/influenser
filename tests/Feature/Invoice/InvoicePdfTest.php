@@ -5,7 +5,7 @@ use App\Models\Invoice;
 use App\Models\User;
 
 test('authenticated user can download invoice pdf', function () {
-    $user    = User::factory()->create();
+    $user = User::factory()->create();
     $invoice = Invoice::factory()->create();
     $campaign = Campaign::find($invoice->campaign_id);
 
@@ -17,7 +17,7 @@ test('authenticated user can download invoice pdf', function () {
 });
 
 test('invoice pdf content disposition contains invoice id', function () {
-    $user    = User::factory()->create();
+    $user = User::factory()->create();
     $invoice = Invoice::factory()->create();
     $campaign = Campaign::find($invoice->campaign_id);
 
@@ -29,7 +29,7 @@ test('invoice pdf content disposition contains invoice id', function () {
 });
 
 test('guests cannot download invoice pdf', function () {
-    $invoice  = Invoice::factory()->create();
+    $invoice = Invoice::factory()->create();
     $campaign = Campaign::find($invoice->campaign_id);
 
     $this->get(route('campaign.invoice.pdf', [$campaign, $invoice]))
@@ -37,9 +37,9 @@ test('guests cannot download invoice pdf', function () {
 });
 
 test('pdf returns 404 when invoice does not belong to campaign', function () {
-    $user     = User::factory()->create();
+    $user = User::factory()->create();
     $campaign = Campaign::factory()->create();
-    $invoice  = Invoice::factory()->create();
+    $invoice = Invoice::factory()->create();
 
     $this->actingAs($user)
         ->get(route('campaign.invoice.pdf', [$campaign, $invoice]))

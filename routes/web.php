@@ -50,6 +50,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/campaign/{campaign}/invoice/{invoice}/pdf', [\App\Http\Controllers\Web\Campaign\InvoiceController::class, 'pdf'])->name('campaign.invoice.pdf');
 });
 
-
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

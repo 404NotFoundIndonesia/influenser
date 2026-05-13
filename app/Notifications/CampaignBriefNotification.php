@@ -22,10 +22,10 @@ class CampaignBriefNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Campaign Brief: ' . $this->campaign->name)
+            ->subject('Campaign Brief: '.$this->campaign->name)
             ->markdown('mail.campaign-brief', [
-                'campaign'   => $this->campaign,
-                'kol'        => $this->kol,
+                'campaign' => $this->campaign,
+                'kol' => $this->kol,
                 'notifiable' => $notifiable,
             ]);
     }

@@ -11,18 +11,18 @@ use Illuminate\Support\Facades\Notification;
 
 test('campaign brief notification is sent via mail', function () {
     $campaign = new Campaign(['name' => 'Test Campaign']);
-    $kol      = new KeyOpinionLeader(['platform' => 'tiktok', 'username' => 'testuser']);
+    $kol = new KeyOpinionLeader(['platform' => 'tiktok', 'username' => 'testuser']);
 
     $notification = new CampaignBriefNotification($campaign, $kol);
 
-    expect($notification->via(new Influencer()))->toBe(['mail']);
+    expect($notification->via(new Influencer))->toBe(['mail']);
 });
 
 // ── toMail() ──────────────────────────────────────────────────────────────────
 
 test('campaign brief notification has correct subject', function () {
     $campaign = new Campaign(['name' => 'Summer Promo 2026']);
-    $kol      = new KeyOpinionLeader(['platform' => 'instagram', 'username' => 'creator']);
+    $kol = new KeyOpinionLeader(['platform' => 'instagram', 'username' => 'creator']);
 
     $mail = (new CampaignBriefNotification($campaign, $kol))
         ->toMail(new Influencer(['name' => 'Jane Doe', 'email' => 'jane@example.com']));
@@ -33,7 +33,7 @@ test('campaign brief notification has correct subject', function () {
 
 test('campaign brief notification mail contains campaign name in view data', function () {
     $campaign = new Campaign(['name' => 'Brand Collab']);
-    $kol      = new KeyOpinionLeader(['platform' => 'tiktok', 'username' => 'creator99']);
+    $kol = new KeyOpinionLeader(['platform' => 'tiktok', 'username' => 'creator99']);
 
     $mail = (new CampaignBriefNotification($campaign, $kol))
         ->toMail(new Influencer(['name' => 'John', 'email' => 'john@example.com']));
@@ -47,8 +47,8 @@ test('campaign brief notification targets the influencer email', function () {
     Notification::fake();
 
     $influencer = Influencer::factory()->create(['email' => 'kol@test.com']);
-    $campaign   = Campaign::factory()->create();
-    $kol        = KeyOpinionLeader::factory()->create(['influencer_id' => $influencer->id]);
+    $campaign = Campaign::factory()->create();
+    $kol = KeyOpinionLeader::factory()->create(['influencer_id' => $influencer->id]);
 
     $influencer->notify(new CampaignBriefNotification($campaign, $kol));
 
