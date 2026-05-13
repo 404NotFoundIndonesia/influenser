@@ -30,11 +30,15 @@ class CampaignController extends Controller
         $campaign->load(['keyOpinionLeaders.influencer']);
 
         return Inertia::render('campaign/Show', [
-            'item' => $campaign,
+            'item'       => $campaign,
             'influencers' => Influencer::query()
                 ->with(['key_opinion_leaders'])
                 ->orderBy('name')
                 ->get(['id', 'name']),
+            'invoices'   => $campaign->invoices()
+                ->with(['influencer', 'keyOpinionLeader'])
+                ->latest()
+                ->get(),
         ]);
     }
 

@@ -124,12 +124,12 @@ Tracks all remaining implementation work derived from [PRD.md](PRD.md).
 ## Section 4 — Invoices & Payments
 > Implements F7. Depends on Section 1 (campaign-KOL pivot). T3.4 wires into T4.3.
 
-- [ ] **T4.1 — Migration: `invoices` table**
+- [x] **T4.1 — Migration: `invoices` table**
   - Columns: `id` (uuid PK), `campaign_id` (uuid FK → campaigns), `influencer_id` (uuid FK → influencers), `key_opinion_leader_id` (uuid FK → key_opinion_leaders, nullable), `amount` (decimal 10,2), `status` (string, default `unpaid`), `paid_at` (timestamp, nullable), `proof_path` (string, nullable), `notes` (text, nullable), timestamps.
   - **DoD**: Migration runs and rolls back cleanly. FK constraints enforce referential integrity.
   - **Test**: Covered by T4.3 feature tests which create invoice records against in-memory SQLite.
 
-- [ ] **T4.2 — Invoice model**
+- [x] **T4.2 — Invoice model**
   - `App\Models\Invoice` with `HasUuids`, `Filterable`, `Paginate`, `HasPicture` (proof upload via `proof_path`).
   - Relationships: `belongsTo Campaign`, `belongsTo Influencer`, `belongsTo KeyOpinionLeader`.
   - Status enum: `App\Enum\InvoiceStatus` with cases `Unpaid`, `Pending`, `Paid`.
@@ -138,7 +138,7 @@ Tracks all remaining implementation work derived from [PRD.md](PRD.md).
     - Create invoice with related models. Assert all three `belongsTo` relationships return the correct model instances.
     - Assert `InvoiceStatus` enum has exactly the three expected cases.
 
-- [ ] **T4.3 — Backend: Invoice CRUD controller**
+- [x] **T4.3 — Backend: Invoice CRUD controller**
   - `App\Http\Controllers\Web\Campaign\InvoiceController` with `index`, `store`, `update`, `destroy`.
   - Routes nested under campaign: `GET /campaign/{campaign}/invoice`, `POST /campaign/{campaign}/invoice`, `PUT /campaign/{campaign}/invoice/{invoice}`, `DELETE /campaign/{campaign}/invoice/{invoice}`.
   - `store`: auto-calculate `amount` from `keyOpinionLeader.endorsement_rate` × deliverable count (from pivot); user can override.
@@ -152,14 +152,14 @@ Tracks all remaining implementation work derived from [PRD.md](PRD.md).
     - `destroy` → assert invoice removed from DB.
     - All unauthenticated requests → assert 302 redirect to login.
 
-- [ ] **T4.4 — Frontend: invoice panel on Campaign Show**
+- [x] **T4.4 — Frontend: invoice panel on Campaign Show**
   - Add an "Invoices" tab/section to Campaign Show (alongside the KOL section from T1.5).
   - Table per invoice: influencer name, KOL platform, amount, status badge, paid date, actions.
   - Actions: generate invoice (opens form modal with pre-filled amount), change status, upload proof, delete.
   - **DoD**: Full invoice lifecycle (create → pending → paid with proof) manageable from the campaign page.
   - **Test**: Assert `campaign.show` Inertia response includes `invoices` prop (extend `CampaignShowTest.php`). No Vue test.
 
-- [ ] **T4.5 — PDF export**
+- [x] **T4.5 — PDF export**
   - Install `barryvdh/laravel-dompdf` via Composer.
   - Route: `GET /campaign/{campaign}/invoice/{invoice}/pdf` — renders `resources/views/pdf/invoice.blade.php` and streams as PDF download.
   - PDF content: campaign name, influencer name, KOL platform + username, deliverable, amount, status, dates, optional notes.

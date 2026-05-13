@@ -37,6 +37,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/campaign/{campaign}/kol', [\App\Http\Controllers\Web\Campaign\CampaignKolController::class, 'store'])->name('campaign.kol.store');
     Route::put('/campaign/{campaign}/kol/{keyOpinionLeader}', [\App\Http\Controllers\Web\Campaign\CampaignKolController::class, 'update'])->name('campaign.kol.update');
     Route::delete('/campaign/{campaign}/kol/{keyOpinionLeader}', [\App\Http\Controllers\Web\Campaign\CampaignKolController::class, 'destroy'])->name('campaign.kol.destroy');
+
+    Route::get('/campaign/{campaign}/invoice', [\App\Http\Controllers\Web\Campaign\InvoiceController::class, 'index'])->name('campaign.invoice.index');
+    Route::post('/campaign/{campaign}/invoice', [\App\Http\Controllers\Web\Campaign\InvoiceController::class, 'store'])->name('campaign.invoice.store');
+    Route::put('/campaign/{campaign}/invoice/{invoice}', [\App\Http\Controllers\Web\Campaign\InvoiceController::class, 'update'])->name('campaign.invoice.update');
+    Route::delete('/campaign/{campaign}/invoice/{invoice}', [\App\Http\Controllers\Web\Campaign\InvoiceController::class, 'destroy'])->name('campaign.invoice.destroy');
+    Route::get('/campaign/{campaign}/invoice/{invoice}/pdf', [\App\Http\Controllers\Web\Campaign\InvoiceController::class, 'pdf'])->name('campaign.invoice.pdf');
 });
 
 

@@ -42,6 +42,12 @@ export enum Platform {
     Telegram = 'telegram',
 }
 
+export enum InvoiceStatus {
+    Unpaid = 'unpaid',
+    Pending = 'pending',
+    Paid = 'paid',
+}
+
 export enum CampaignStatus {
     Draft = 'draft',
     Ongoing = 'ongoing',
@@ -120,6 +126,23 @@ export interface CampaignKeyOpinionLeader extends KeyOpinionLeader {
     influencer?: Influencer;
 }
 
+export interface Invoice {
+    id: string;
+    campaign_id: string;
+    influencer_id: string;
+    key_opinion_leader_id: string | null;
+    amount: string;
+    status: InvoiceStatus;
+    paid_at: string | null;
+    proof_path: string | null;
+    picture_url: string;
+    notes: string | null;
+    influencer?: Influencer;
+    key_opinion_leader?: KeyOpinionLeader;
+    created_at: Date;
+    updated_at: Date;
+}
+
 export interface Campaign {
     id: string;
     name: string;
@@ -130,6 +153,7 @@ export interface Campaign {
     banner_path: string | null;
     picture_url: string;
     key_opinion_leaders?: CampaignKeyOpinionLeader[];
+    invoices?: Invoice[];
     created_at: Date;
     updated_at: Date;
 }

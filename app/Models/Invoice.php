@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use App\Enum\InvoiceStatus;
+use App\Traits\Models\Filterable;
+use App\Traits\Models\HasPicture;
+use App\Traits\Models\Paginate;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,6 +15,9 @@ class Invoice extends Model
 {
     use HasFactory;
     use HasUuids;
+    use Filterable;
+    use Paginate;
+    use HasPicture;
 
     protected $fillable = [
         'campaign_id', 'influencer_id', 'key_opinion_leader_id',
@@ -23,6 +29,15 @@ class Invoice extends Model
         'paid_at' => 'datetime',
         'status'  => InvoiceStatus::class,
     ];
+
+    protected $appends = ['picture_url'];
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->picturePathColumn = 'proof_path';
+        $this->nameColumn = 'notes';
+    }
 
     public function campaign(): BelongsTo
     {
