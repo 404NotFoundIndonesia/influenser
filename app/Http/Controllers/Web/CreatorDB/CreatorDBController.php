@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web\CreatorDB;
 
 use App\Enum\Platform;
+use App\Jobs\SyncKolFromApify;
 use App\Jobs\SyncKolFromCreatorDB;
 use App\Models\Influencer;
 use App\Models\KeyOpinionLeader;
@@ -58,6 +59,13 @@ class CreatorDBController
     public function sync(Influencer $influencer, KeyOpinionLeader $keyOpinionLeader): RedirectResponse
     {
         SyncKolFromCreatorDB::dispatch($keyOpinionLeader);
+
+        return back();
+    }
+
+    public function syncApify(Influencer $influencer, KeyOpinionLeader $keyOpinionLeader): RedirectResponse
+    {
+        SyncKolFromApify::dispatch($keyOpinionLeader);
 
         return back();
     }

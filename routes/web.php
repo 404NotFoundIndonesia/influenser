@@ -30,6 +30,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/creator-db/search', [\App\Http\Controllers\Web\CreatorDB\CreatorDBController::class, 'search'])->name('creator-db.search');
     Route::post('/influencer/{influencer}/kol/import', [\App\Http\Controllers\Web\CreatorDB\CreatorDBController::class, 'import'])->name('influencer.kol.import');
     Route::post('/influencer/{influencer}/kol/{keyOpinionLeader}/sync/creator-db', [\App\Http\Controllers\Web\CreatorDB\CreatorDBController::class, 'sync'])->name('influencer.kol.sync.creator-db');
+    Route::post('/influencer/{influencer}/kol/{keyOpinionLeader}/sync/apify', [\App\Http\Controllers\Web\CreatorDB\CreatorDBController::class, 'syncApify'])->name('influencer.kol.sync.apify');
 
     Route::get('/campaign', [\App\Http\Controllers\Web\Campaign\CampaignController::class, 'index'])->name('campaign.index');
     Route::post('/campaign', [\App\Http\Controllers\Web\Campaign\CampaignController::class, 'store'])->name('campaign.store');

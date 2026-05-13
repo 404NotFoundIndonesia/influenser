@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { Influencer, KeyOpinionLeader } from '@/types/model';
+import { Influencer, KeyOpinionLeader, Platform } from '@/types/model';
 import {
-    Panel, Button, Tag, useConfirm, ConfirmPopup
+    Panel, Button, Tag, Menu, useConfirm, ConfirmPopup
 } from 'primevue';
 import { dateHumanFormatWithTime, digitFormatter, shortNumberFormatter } from '@/lib/utils';
 import { router } from '@inertiajs/vue3';
-
+import { ref } from 'vue';
+import type { MenuItem } from 'primevue/menuitem';
 
 interface Props {
     influencer: Influencer;
@@ -14,12 +15,49 @@ interface Props {
 const props = defineProps<Props>();
 const confirm = useConfirm();
 
-const syncViaCreatorDB = (item: KeyOpinionLeader) => {
-    router.post(route('influencer.kol.sync.creator-db', {
-        influencer: props.influencer.id,
-        keyOpinionLeader: item.id,
-    }), {}, { preserveScroll: true });
+const apifySupportedPlatforms = [
+    Platform.TikTok,
+    Platform.Instagram,
+    Platform.Youtube,
+    Platform.Facebook,
+];
+
+const syncMenuRef = ref<Record<string, any>>({});
+
+const syncMenuItems = (kol: KeyOpinionLeader): MenuItem[] => {
+    const items: MenuItem[] = [
+        {
+            label: 'Sync via CreatorDB',
+            icon: 'pi pi-database',
+            command: () => {
+                router.post(route('influencer.kol.sync.creator-db', {
+                    influencer: props.influencer.id,
+                    keyOpinionLeader: kol.id,
+                }), {}, { preserveScroll: true });
+            },
+        },
+    ];
+
+    if (apifySupportedPlatforms.includes(kol.platform as Platform)) {
+        items.push({
+            label: 'Sync via Apify',
+            icon: 'pi pi-bolt',
+            command: () => {
+                router.post(route('influencer.kol.sync.apify', {
+                    influencer: props.influencer.id,
+                    keyOpinionLeader: kol.id,
+                }), {}, { preserveScroll: true });
+            },
+        });
+    }
+
+    return items;
 };
+
+const toggleSyncMenu = (event: MouseEvent, kolId: string) => {
+    syncMenuRef.value[kolId]?.toggle(event);
+};
+
 const destroy = (event: MouseEvent, item: KeyOpinionLeader) => {
     confirm.require({
         target: event.currentTarget as HTMLElement,
@@ -77,8 +115,16 @@ const destroy = (event: MouseEvent, item: KeyOpinionLeader) => {
                         <Button
                             icon="pi pi-sync" size="small" variant="outlined" rounded
                             :loading="keyOpinionLeader.is_syncing"
-                            v-tooltip.bottom="'Sync via CreatorDB'"
-                            @click="syncViaCreatorDB(keyOpinionLeader)" />
+                            :disabled="keyOpinionLeader.is_syncing"
+                            v-tooltip.bottom="'Sync'"
+                            aria-haspopup="true"
+                            :aria-controls="`sync-menu-${keyOpinionLeader.id}`"
+                            @click="toggleSyncMenu($event, keyOpinionLeader.id)" />
+                        <Menu
+                            :ref="(el) => { if (el) syncMenuRef[keyOpinionLeader.id] = el }"
+                            :id="`sync-menu-${keyOpinionLeader.id}`"
+                            :model="syncMenuItems(keyOpinionLeader)"
+                            :popup="true" />
                         <Button icon="pi pi-trash" size="small"
                                 variant="outlined"
                                 @click="destroy($event, keyOpinionLeader)"

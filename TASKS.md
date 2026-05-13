@@ -265,7 +265,7 @@ Tracks all remaining implementation work derived from [PRD.md](PRD.md).
 ## Section 7 — Apify Scraper Integration
 > Implements F10. Extends the sync flow from Section 6. Independent prerequisite: Section 6 sync pattern (T6.3, T6.5).
 
-- [ ] **T7.1 — Config & environment setup**
+- [x] **T7.1 — Config & environment setup**
   - Add `APIFY_TOKEN=` to `.env.example`.
   - Add to `config/influenser.php`:
     ```php
@@ -284,7 +284,7 @@ Tracks all remaining implementation work derived from [PRD.md](PRD.md).
     - Assert `config('influenser.apify.token')` reads from `APIFY_TOKEN` env.
     - Assert all four actor keys exist in `config('influenser.apify.actors')`.
 
-- [ ] **T7.2 — Apify service**
+- [x] **T7.2 — Apify service**
   - `App\Services\ThirdParty\ApifyServiceInterface` with method `runActor(string $actorId, array $input): array`.
   - `App\Services\ThirdParty\ApifyServiceV1` implementation: POST to `https://api.apify.com/v2/acts/{actorId}/run-sync-get-dataset-items` with bearer token, returns parsed dataset items array.
   - Register as singleton in `ThirdPartyServiceProvider` alongside CreatorDB binding.
@@ -293,7 +293,7 @@ Tracks all remaining implementation work derived from [PRD.md](PRD.md).
     - Fake `Http` facade returning a 200 JSON array. Call `runActor()` → assert returns the parsed array and HTTP call used Bearer token header.
     - Fake `Http` returning 500 → assert exception thrown.
 
-- [ ] **T7.3 — Per-platform field mapping**
+- [x] **T7.3 — Per-platform field mapping**
   - `App\Services\ThirdParty\ApifyKolSyncService` — injected with `ApifyServiceInterface`.
   - Method `sync(KeyOpinionLeader $kol): array` — resolves actor ID from `config('influenser.apify.actors.{platform}')`, builds actor input from `$kol->username`, calls `ApifyServiceInterface::runActor`, maps response fields to KOL column names.
   - Returns normalized array compatible with `KeyOpinionLeader::$fillable`.
@@ -302,7 +302,7 @@ Tracks all remaining implementation work derived from [PRD.md](PRD.md).
     - Mock `ApifyServiceInterface`. For each supported platform (tiktok, instagram, youtube, facebook): call `sync()` with a KOL of that platform → assert returned array contains `followers` key.
     - Pass a KOL with platform `linkedin` (unsupported) → assert `\RuntimeException` thrown.
 
-- [ ] **T7.4 — Queued sync job: `SyncKolFromApify`**
+- [x] **T7.4 — Queued sync job: `SyncKolFromApify`**
   - `App\Jobs\SyncKolFromApify`: sets `syncing_at`, calls `ApifyKolSyncService::sync`, writes returned metrics to KOL, sets `synced_at`, clears `syncing_at`.
   - On failure: clears `syncing_at`, logs error. If `CREATOR_DB_API` is configured, falls back by dispatching `SyncKolFromCreatorDB` (T6.3).
   - Route: `POST /influencer/{influencer}/kol/{kol}/sync/apify` → dispatches job.
@@ -312,7 +312,7 @@ Tracks all remaining implementation work derived from [PRD.md](PRD.md).
     - Mock service throwing exception, `CREATOR_DB_API` set → assert `SyncKolFromCreatorDB` dispatched, `syncing_at` null.
     - Mock service throwing exception, `CREATOR_DB_API` not set → assert no fallback job dispatched, `syncing_at` null.
 
-- [ ] **T7.5 — Frontend: sync source selector**
+- [x] **T7.5 — Frontend: sync source selector**
   - Extend the "Sync" button from T6.5 into a `DropdownMenu` with two items: "Sync via CreatorDB" and "Sync via Apify".
   - Each option dispatches to its respective endpoint (T6.3 or T7.4). Disabled while `syncing_at` is set.
   - Hide "Sync via Apify" option if platform is not in the supported actor list (TikTok, Instagram, YouTube, Facebook).
